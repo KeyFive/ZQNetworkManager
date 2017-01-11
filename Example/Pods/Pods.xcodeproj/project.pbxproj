@@ -477,7 +477,6 @@
 		F3BE6E7E9D30491C8B9E297277B5D008 /* FBSnapshotTestCasePlatform.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FBSnapshotTestCasePlatform.h; path = FBSnapshotTestCase/FBSnapshotTestCasePlatform.h; sourceTree = "<group>"; };
 		F6B43E3BEBD46F6BBE375CCE96C3DAB8 /* KWProbePoller.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = KWProbePoller.m; path = Classes/Core/KWProbePoller.m; sourceTree = "<group>"; };
 		F733F35DB9BA613CF116CE8531C75F3B /* KWMatcherFactory.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = KWMatcherFactory.m; path = Classes/Core/KWMatcherFactory.m; sourceTree = "<group>"; };
-		F9261AF3C344B81FFC370D4303721AA8 /* CHDefine.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CHDefine.h; sourceTree = "<group>"; };
 		FB932871D0CDD1F08DABE872636DF90D /* KWNotificationMatcher.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = KWNotificationMatcher.m; path = Classes/Matchers/KWNotificationMatcher.m; sourceTree = "<group>"; };
 		FC27B6D965822471A0A7EE3AE4A89B4A /* KWGenericMatcher.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = KWGenericMatcher.h; path = Classes/Matchers/KWGenericMatcher.h; sourceTree = "<group>"; };
 		FEC5D3D0EDD2CE2773805E90770549FB /* KiwiBlockMacros.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = KiwiBlockMacros.h; path = Classes/Core/KiwiBlockMacros.h; sourceTree = "<group>"; };
@@ -563,15 +562,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		1EDD217E6373602BEB35013216AFD62F /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				F9261AF3C344B81FFC370D4303721AA8 /* CHDefine.h */,
-			);
-			name = Classes;
-			path = Classes;
-			sourceTree = "<group>";
-		};
 		266DAA0F63F54A188B1FDF5754687B8B /* FBSnapshotTestCase */ = {
 			isa = PBXGroup;
 			children = (
@@ -581,6 +571,14 @@
 			);
 			name = FBSnapshotTestCase;
 			path = FBSnapshotTestCase;
+			sourceTree = "<group>";
+		};
+		283CD674791F22496E10550FB035D8CE /* ZQNetworkManager */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = ZQNetworkManager;
+			path = ../..;
 			sourceTree = "<group>";
 		};
 		42AC83A13DCEAC970A30E8B9EE271F6B /* Kiwi */ = {
@@ -776,14 +774,6 @@
 			path = Kiwi;
 			sourceTree = "<group>";
 		};
-		456FC4BF4FF419AC2A791608C0316843 /* Development Pods */ = {
-			isa = PBXGroup;
-			children = (
-				B0FF9824E736AABAE0B4F69A47984F56 /* ZQNetworkManager */,
-			);
-			name = "Development Pods";
-			sourceTree = "<group>";
-		};
 		48B559057FBFB6B4716FC5FFD07D6943 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -829,6 +819,14 @@
 			path = "Target Support Files/Pods-ZQNetworkManager_Example";
 			sourceTree = "<group>";
 		};
+		661908D8EE74463F04D13836243F8445 /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				283CD674791F22496E10550FB035D8CE /* ZQNetworkManager */,
+			);
+			name = "Development Pods";
+			sourceTree = "<group>";
+		};
 		6A12D6E3D6477CBC06F0ABA4D7DAB8C5 /* SwiftSupport */ = {
 			isa = PBXGroup;
 			children = (
@@ -841,7 +839,7 @@
 			isa = PBXGroup;
 			children = (
 				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
-				456FC4BF4FF419AC2A791608C0316843 /* Development Pods */,
+				661908D8EE74463F04D13836243F8445 /* Development Pods */,
 				14B8B9B15ECBE87983FF987239AB2D7B /* Frameworks */,
 				48B559057FBFB6B4716FC5FFD07D6943 /* Pods */,
 				D5ED755FF88EB9DBD2A67E6769D6FA7F /* Products */,
@@ -861,24 +859,6 @@
 			);
 			name = "Support Files";
 			path = "../Target Support Files/FBSnapshotTestCase";
-			sourceTree = "<group>";
-		};
-		B0FF9824E736AABAE0B4F69A47984F56 /* ZQNetworkManager */ = {
-			isa = PBXGroup;
-			children = (
-				BCFEF525C9BD74BE0E0DD2EB89AABE96 /* ZQNetworkManager */,
-			);
-			name = ZQNetworkManager;
-			path = ../..;
-			sourceTree = "<group>";
-		};
-		BCFEF525C9BD74BE0E0DD2EB89AABE96 /* ZQNetworkManager */ = {
-			isa = PBXGroup;
-			children = (
-				1EDD217E6373602BEB35013216AFD62F /* Classes */,
-			);
-			name = ZQNetworkManager;
-			path = ZQNetworkManager;
 			sourceTree = "<group>";
 		};
 		D5ED755FF88EB9DBD2A67E6769D6FA7F /* Products */ = {

@@ -1,0 +1,6 @@
+framework module Pods_ZQNetworkManager_Tests {
+  umbrella header "Pods-ZQNetworkManager_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}
