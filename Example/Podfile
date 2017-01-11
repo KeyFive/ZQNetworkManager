@@ -1,0 +1,12 @@
+use_frameworks!
+
+target 'ZQNetworkManager_Example' do
+  pod 'ZQNetworkManager', :path => '../'
+
+  target 'ZQNetworkManager_Tests' do
+    inherit! :search_paths
+
+    pod 'Kiwi'
+  pod 'FBSnapshotTestCase'
+  end
+end
