@@ -1,0 +1,26 @@
+PODS:
+  - FBSnapshotTestCase (2.1.4):
+    - FBSnapshotTestCase/SwiftSupport (= 2.1.4)
+  - FBSnapshotTestCase/Core (2.1.4)
+  - FBSnapshotTestCase/SwiftSupport (2.1.4):
+    - FBSnapshotTestCase/Core
+  - Kiwi (2.4.0)
+  - ZQNetworkManager (0.1.0)
+
+DEPENDENCIES:
+  - FBSnapshotTestCase
+  - Kiwi
+  - ZQNetworkManager (from `../`)
+
+EXTERNAL SOURCES:
+  ZQNetworkManager:
+    :path: ../
+
+SPEC CHECKSUMS:
+  FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
+  Kiwi: f49c9d54b28917df5928fe44968a39ed198cb8a8
+  ZQNetworkManager: 9a8ebb43ce8a1198166a031e393856cad888edfd
+
+PODFILE CHECKSUM: 88a58d00c2792f89ff71dc696d2ce6e5874d8a01
+
+COCOAPODS: 1.2.0.beta.3
