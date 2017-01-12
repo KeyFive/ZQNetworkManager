@@ -5,22 +5,22 @@ PODS:
   - FBSnapshotTestCase/SwiftSupport (2.1.4):
     - FBSnapshotTestCase/Core
   - Kiwi (2.4.0)
-  - ZQNetworkManager (0.1.0)
+  - ZQNetworkManager (0.2.0)
 
 DEPENDENCIES:
   - FBSnapshotTestCase
   - Kiwi
-  - ZQNetworkManager (from `../`)
+  - ZQNetworkManager (from `../ZQNetworkManager.podspec`)
 
 EXTERNAL SOURCES:
   ZQNetworkManager:
-    :path: ../
+    :podspec: ../ZQNetworkManager.podspec
 
 SPEC CHECKSUMS:
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
   Kiwi: f49c9d54b28917df5928fe44968a39ed198cb8a8
-  ZQNetworkManager: 9a8ebb43ce8a1198166a031e393856cad888edfd
+  ZQNetworkManager: 98d955df3c7aa7095c77d0dbb39aeb7dc8339bc1
 
-PODFILE CHECKSUM: 88a58d00c2792f89ff71dc696d2ce6e5874d8a01
+PODFILE CHECKSUM: bb8c9120876ce2444793ecbfd222b97b0f18d3a4
 
 COCOAPODS: 1.2.0.beta.3

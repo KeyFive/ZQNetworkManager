@@ -1,7 +1,7 @@
 use_frameworks!
 
 target 'ZQNetworkManager_Example' do
-  pod 'ZQNetworkManager', :path => '../'
+  pod 'ZQNetworkManager', :podspec => '../ZQNetworkManager.podspec'
 
   target 'ZQNetworkManager_Tests' do
     inherit! :search_paths
