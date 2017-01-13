@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ZQNetworkManager'
-  s.version          = '0.2.0'
+  s.version          = '0.3.0'
   s.summary          = 'A network mangaer'
 
 # This description is used to generate tags and improve search results.
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-a cache trollet network manager
+  a cache trollet network manager
                        DESC
 
   s.homepage         = 'https://github.com/KeyFive/ZQNetworkManager.git'
@@ -30,14 +30,14 @@ a cache trollet network manager
 
   s.ios.deployment_target = '7.0'
 
-  s.source_files = 'ZQNetworkManager/Classes/**/*'
+  s.source_files = 'ZQNetworkManager/ZQNetworkManager/**/*.{h,m}'
   
   # s.resource_bundles = {
   #   'ZQNetworkManager' => ['ZQNetworkManager/Assets/*.png']
   # }
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  #s.dependency 'YYCache', '~>1.0.4'
-  #s.dependency 'YYModel', '~>1.0.4'
+  s.public_header_files = 'ZQNetworkManager/ZQNetworkManager/**/*.h'
+  s.frameworks = 'UIKit'
+  s.dependency 'YYCache', '~>1.0.4'
+  s.dependency 'YYModel', '~>1.0.4'
 end
