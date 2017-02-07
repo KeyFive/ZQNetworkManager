@@ -1,14 +1,7 @@
-
-# open source
-source 'https://github.com/CocoaPods/Specs.git'
-
-# my work
-source 'https://github.com/KeyFive/ZQPodSpec.git'
-
 use_frameworks!
 
 target 'ZQNetworkManager_Example' do
-  pod 'ZQNetworkManager'
+  pod 'ZQNetworkManager', :path => '../ZQNetworkManager'
 
   target 'ZQNetworkManager_Tests' do
     inherit! :search_paths

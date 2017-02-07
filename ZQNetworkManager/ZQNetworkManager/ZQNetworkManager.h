@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZQNetworkManager : NSObject
 
+<<<<<<< HEAD
+<<<<<<< HEAD
 @property (nonatomic, strong, nullable) id<ZQInterfaceActivitConfigure> activityConfigure;
 @property (nonatomic, copy, readonly) NSString *managerName;
 
@@ -25,3 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+=======
+// In this header, you should import all the public headers of your framework using statements like #import <ZQNetworkManager/PublicHeader.h>
+>>>>>>> parent of d4e09fe... 开发完成
+=======
+// In this header, you should import all the public headers of your framework using statements like #import <ZQNetworkManager/PublicHeader.h>
+>>>>>>> parent of d4e09fe... 开发完成

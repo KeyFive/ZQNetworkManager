@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+<<<<<<< HEAD
+<<<<<<< HEAD
 		95A1C7DF1E2C69230031F65B /* ZQNetworkManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A1C7DD1E2C69230031F65B /* ZQNetworkManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		95A1C7E01E2C69230031F65B /* ZQNetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A1C7DE1E2C69230031F65B /* ZQNetworkManager.m */; };
 		95A1C7E21E2C69FC0031F65B /* ZQInterfaceConfigure.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A1C7E11E2C69FC0031F65B /* ZQInterfaceConfigure.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -35,13 +37,26 @@
 		95A1C7EC1E2C75C70031F65B /* ZQNetworkRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZQNetworkRequest.m; sourceTree = "<group>"; };
 		95A1C7EF1E2CD34D0031F65B /* ZQRequestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZQRequestModel.h; sourceTree = "<group>"; };
 		95A1C7F01E2CD34D0031F65B /* ZQRequestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZQRequestModel.m; sourceTree = "<group>"; };
+=======
+		95A3F9071E28A49D005F1F68 /* ZQNetworkManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A3F9051E28A49D005F1F68 /* ZQNetworkManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		95A3F90F1E28A585005F1F68 /* Test.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A3F90D1E28A585005F1F68 /* Test.h */; };
+		95A3F9101E28A585005F1F68 /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A3F90E1E28A585005F1F68 /* Test.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+>>>>>>> parent of d4e09fe... 开发完成
+=======
+		95A3F9071E28A49D005F1F68 /* ZQNetworkManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A3F9051E28A49D005F1F68 /* ZQNetworkManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		95A3F90F1E28A585005F1F68 /* Test.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A3F90D1E28A585005F1F68 /* Test.h */; };
+		95A3F9101E28A585005F1F68 /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A3F90E1E28A585005F1F68 /* Test.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+>>>>>>> parent of d4e09fe... 开发完成
 		95A3F9021E28A49D005F1F68 /* ZQNetworkManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZQNetworkManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		95A3F9061E28A49D005F1F68 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		95B23C761E309D9B00F09048 /* ZQNetworkCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZQNetworkCenter.h; sourceTree = "<group>"; };
-		95B23C771E309D9B00F09048 /* ZQNetworkCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZQNetworkCenter.m; sourceTree = "<group>"; };
-		95B23C881E348C6B00F09048 /* ZQNetworkCacheCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZQNetworkCacheCenter.h; sourceTree = "<group>"; };
-		95B23C891E348C6B00F09048 /* ZQNetworkCacheCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZQNetworkCacheCenter.m; sourceTree = "<group>"; };
-		B5C8148B2166B1D12D6A9661 /* Pods-ZQNetworkManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZQNetworkManager.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ZQNetworkManager/Pods-ZQNetworkManager.debug.xcconfig"; sourceTree = "<group>"; };
+		95A3F90D1E28A585005F1F68 /* Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Test.h; sourceTree = "<group>"; };
+		95A3F90E1E28A585005F1F68 /* Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,53 +64,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F9D3BD24C16FE11A6BC12E46 /* Pods_ZQNetworkManager.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		53378CB54C0AEA9F33A5FB03 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				B5C8148B2166B1D12D6A9661 /* Pods-ZQNetworkManager.debug.xcconfig */,
-				07446407A447F93050AF9890 /* Pods-ZQNetworkManager.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
-		95A1C7F31E2CD4720031F65B /* ZQInterfaceManager */ = {
-			isa = PBXGroup;
-			children = (
-				95A1C7E31E2C6A370031F65B /* ZQInterfaceManager.h */,
-				95A1C7E41E2C6A370031F65B /* ZQInterfaceManager.m */,
-				95A1C7EB1E2C75C70031F65B /* ZQNetworkRequest.h */,
-				95A1C7EC1E2C75C70031F65B /* ZQNetworkRequest.m */,
-				95A1C7EF1E2CD34D0031F65B /* ZQRequestModel.h */,
-				95A1C7F01E2CD34D0031F65B /* ZQRequestModel.m */,
-			);
-			name = ZQInterfaceManager;
-			sourceTree = "<group>";
-		};
-		95A1C7F61E2F6E480031F65B /* ZQNetworkCenter */ = {
-			isa = PBXGroup;
-			children = (
-				95B23C761E309D9B00F09048 /* ZQNetworkCenter.h */,
-				95B23C771E309D9B00F09048 /* ZQNetworkCenter.m */,
-				95B23C881E348C6B00F09048 /* ZQNetworkCacheCenter.h */,
-				95B23C891E348C6B00F09048 /* ZQNetworkCacheCenter.m */,
-			);
-			name = ZQNetworkCenter;
-			sourceTree = "<group>";
-		};
 		95A3F8F81E28A49D005F1F68 = {
 			isa = PBXGroup;
 			children = (
 				95A3F9041E28A49D005F1F68 /* ZQNetworkManager */,
 				95A3F9031E28A49D005F1F68 /* Products */,
-				53378CB54C0AEA9F33A5FB03 /* Pods */,
-				EFA083379AF49BF2BB6672D6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -110,22 +89,26 @@
 		95A3F9041E28A49D005F1F68 /* ZQNetworkManager */ = {
 			isa = PBXGroup;
 			children = (
+<<<<<<< HEAD
+<<<<<<< HEAD
 				95A1C7DD1E2C69230031F65B /* ZQNetworkManager.h */,
 				95A1C7DE1E2C69230031F65B /* ZQNetworkManager.m */,
 				95A1C7E11E2C69FC0031F65B /* ZQInterfaceConfigure.h */,
 				95A1C7F61E2F6E480031F65B /* ZQNetworkCenter */,
 				95A1C7F31E2CD4720031F65B /* ZQInterfaceManager */,
+=======
+				95A3F9051E28A49D005F1F68 /* ZQNetworkManager.h */,
+				95A3F90D1E28A585005F1F68 /* Test.h */,
+				95A3F90E1E28A585005F1F68 /* Test.m */,
+>>>>>>> parent of d4e09fe... 开发完成
+=======
+				95A3F9051E28A49D005F1F68 /* ZQNetworkManager.h */,
+				95A3F90D1E28A585005F1F68 /* Test.h */,
+				95A3F90E1E28A585005F1F68 /* Test.m */,
+>>>>>>> parent of d4e09fe... 开发完成
 				95A3F9061E28A49D005F1F68 /* Info.plist */,
 			);
 			path = ZQNetworkManager;
-			sourceTree = "<group>";
-		};
-		EFA083379AF49BF2BB6672D6 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				4C5F09E0DE3DC65585A371FE /* Pods_ZQNetworkManager.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -135,6 +118,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+<<<<<<< HEAD
+<<<<<<< HEAD
 				95A1C7DF1E2C69230031F65B /* ZQNetworkManager.h in Headers */,
 				95A1C7E21E2C69FC0031F65B /* ZQInterfaceConfigure.h in Headers */,
 				95A1C7ED1E2C75C70031F65B /* ZQNetworkRequest.h in Headers */,
@@ -142,6 +127,14 @@
 				95A1C7F11E2CD34D0031F65B /* ZQRequestModel.h in Headers */,
 				95B23C8A1E348C6B00F09048 /* ZQNetworkCacheCenter.h in Headers */,
 				95B23C781E309D9B00F09048 /* ZQNetworkCenter.h in Headers */,
+=======
+				95A3F90F1E28A585005F1F68 /* Test.h in Headers */,
+				95A3F9071E28A49D005F1F68 /* ZQNetworkManager.h in Headers */,
+>>>>>>> parent of d4e09fe... 开发完成
+=======
+				95A3F90F1E28A585005F1F68 /* Test.h in Headers */,
+				95A3F9071E28A49D005F1F68 /* ZQNetworkManager.h in Headers */,
+>>>>>>> parent of d4e09fe... 开发完成
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,12 +145,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 95A3F90A1E28A49D005F1F68 /* Build configuration list for PBXNativeTarget "ZQNetworkManager" */;
 			buildPhases = (
-				690A8B66623C7ADC1095818A /* [CP] Check Pods Manifest.lock */,
 				95A3F8FD1E28A49D005F1F68 /* Sources */,
 				95A3F8FE1E28A49D005F1F68 /* Frameworks */,
 				95A3F8FF1E28A49D005F1F68 /* Headers */,
 				95A3F9001E28A49D005F1F68 /* Resources */,
-				BFD4660D29C4304DC9E61841 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -174,7 +165,6 @@
 		95A3F8F91E28A49D005F1F68 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				CLASSPREFIX = ZQ;
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = ZQ;
 				TargetAttributes = {
@@ -211,50 +201,25 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		690A8B66623C7ADC1095818A /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		BFD4660D29C4304DC9E61841 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ZQNetworkManager/Pods-ZQNetworkManager-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		95A3F8FD1E28A49D005F1F68 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+<<<<<<< HEAD
+<<<<<<< HEAD
 				95B23C8B1E348C6B00F09048 /* ZQNetworkCacheCenter.m in Sources */,
 				95A1C7F21E2CD34D0031F65B /* ZQRequestModel.m in Sources */,
 				95B23C791E309D9B00F09048 /* ZQNetworkCenter.m in Sources */,
 				95A1C7E61E2C6A370031F65B /* ZQInterfaceManager.m in Sources */,
 				95A1C7E01E2C69230031F65B /* ZQNetworkManager.m in Sources */,
 				95A1C7EE1E2C75C70031F65B /* ZQNetworkRequest.m in Sources */,
+=======
+				95A3F9101E28A585005F1F68 /* Test.m in Sources */,
+>>>>>>> parent of d4e09fe... 开发完成
+=======
+				95A3F9101E28A585005F1F68 /* Test.m in Sources */,
+>>>>>>> parent of d4e09fe... 开发完成
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -359,7 +324,6 @@
 		};
 		95A3F90B1E28A49D005F1F68 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B5C8148B2166B1D12D6A9661 /* Pods-ZQNetworkManager.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				DEAD_CODE_STRIPPING = NO;
@@ -367,10 +331,15 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+<<<<<<< HEAD
+<<<<<<< HEAD
 				GCC_PREFIX_HEADER = "";
+=======
+>>>>>>> parent of d4e09fe... 开发完成
+=======
+>>>>>>> parent of d4e09fe... 开发完成
 				INFOPLIST_FILE = ZQNetworkManager/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.czq.ZQNetworkManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -381,7 +350,6 @@
 		};
 		95A3F90C1E28A49D005F1F68 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 07446407A447F93050AF9890 /* Pods-ZQNetworkManager.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				DEAD_CODE_STRIPPING = NO;
@@ -389,10 +357,15 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+<<<<<<< HEAD
+<<<<<<< HEAD
 				GCC_PREFIX_HEADER = "";
+=======
+>>>>>>> parent of d4e09fe... 开发完成
+=======
+>>>>>>> parent of d4e09fe... 开发完成
 				INFOPLIST_FILE = ZQNetworkManager/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.czq.ZQNetworkManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";

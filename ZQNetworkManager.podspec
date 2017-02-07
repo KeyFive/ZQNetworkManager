@@ -8,7 +8,15 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ZQNetworkManager'
+<<<<<<< HEAD
+<<<<<<< HEAD
   s.version          = '1.0.0'
+=======
+  s.version          = '0.3.0'
+>>>>>>> parent of d4e09fe... 开发完成
+=======
+  s.version          = '0.3.0'
+>>>>>>> parent of d4e09fe... 开发完成
   s.summary          = 'A network mangaer'
 
 # This description is used to generate tags and improve search results.
@@ -36,10 +44,8 @@ Pod::Spec.new do |s|
   #   'ZQNetworkManager' => ['ZQNetworkManager/Assets/*.png']
   # }
 
-  s.public_header_files = 'ZQNetworkManager/ZQNetworkManager/ZQNetworkManager.h'
+  s.public_header_files = 'ZQNetworkManager/ZQNetworkManager/**/*.h'
   s.frameworks = 'UIKit'
   s.dependency 'YYCache', '~>1.0.4'
   s.dependency 'YYModel', '~>1.0.4'
-  s.dependency 'AFNetworking', '~>3.1.0'
-  s.dependency 'YYCategories', '~>1.0.4'
 end
