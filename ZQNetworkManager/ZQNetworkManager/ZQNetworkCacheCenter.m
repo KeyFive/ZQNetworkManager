@@ -8,6 +8,7 @@
 
 #import "ZQNetworkCacheCenter.h"
 #import <YYCache/YYCache.h>
+#import <YYCategories/YYCategories.h>
 
 NSString * const ZQCacheDateKey = @"zq_cache_date_key";
 NSString * const ZQCacheNoParamsKey = @"zq_cache_no_params_key";

@@ -16,7 +16,6 @@
 		95A1C7EE1E2C75C70031F65B /* ZQNetworkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A1C7EC1E2C75C70031F65B /* ZQNetworkRequest.m */; };
 		95A1C7F11E2CD34D0031F65B /* ZQRequestModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A1C7EF1E2CD34D0031F65B /* ZQRequestModel.h */; };
 		95A1C7F21E2CD34D0031F65B /* ZQRequestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A1C7F01E2CD34D0031F65B /* ZQRequestModel.m */; };
-		95A1C7F51E2DBE130031F65B /* ZQNetworkManagerPrefixHeader.pch in Headers */ = {isa = PBXBuildFile; fileRef = 95A1C7F41E2DBE130031F65B /* ZQNetworkManagerPrefixHeader.pch */; };
 		95A3F9071E28A49D005F1F68 /* ZQNetworkManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A3F9051E28A49D005F1F68 /* ZQNetworkManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		95B23C781E309D9B00F09048 /* ZQNetworkCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 95B23C761E309D9B00F09048 /* ZQNetworkCenter.h */; };
 		95B23C791E309D9B00F09048 /* ZQNetworkCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 95B23C771E309D9B00F09048 /* ZQNetworkCenter.m */; };
@@ -37,7 +36,6 @@
 		95A1C7EC1E2C75C70031F65B /* ZQNetworkRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZQNetworkRequest.m; sourceTree = "<group>"; };
 		95A1C7EF1E2CD34D0031F65B /* ZQRequestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZQRequestModel.h; sourceTree = "<group>"; };
 		95A1C7F01E2CD34D0031F65B /* ZQRequestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZQRequestModel.m; sourceTree = "<group>"; };
-		95A1C7F41E2DBE130031F65B /* ZQNetworkManagerPrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZQNetworkManagerPrefixHeader.pch; sourceTree = "<group>"; };
 		95A3F9021E28A49D005F1F68 /* ZQNetworkManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZQNetworkManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		95A3F9051E28A49D005F1F68 /* ZQNetworkManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZQNetworkManager.h; sourceTree = "<group>"; };
 		95A3F9061E28A49D005F1F68 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -118,7 +116,6 @@
 				95A1C7DD1E2C69230031F65B /* ZQRequestManager.h */,
 				95A1C7DE1E2C69230031F65B /* ZQRequestManager.m */,
 				95A1C7E11E2C69FC0031F65B /* ZQInterfaceConfigure.h */,
-				95A1C7F41E2DBE130031F65B /* ZQNetworkManagerPrefixHeader.pch */,
 				95A1C7F61E2F6E480031F65B /* ZQNetworkCenter */,
 				95A1C7F31E2CD4720031F65B /* ZQInterfaceManager */,
 				95A3F9061E28A49D005F1F68 /* Info.plist */,
@@ -146,7 +143,6 @@
 				95A1C7E51E2C6A370031F65B /* ZQInterfaceManager.h in Headers */,
 				95A1C7F11E2CD34D0031F65B /* ZQRequestModel.h in Headers */,
 				95A1C7DF1E2C69230031F65B /* ZQRequestManager.h in Headers */,
-				95A1C7F51E2DBE130031F65B /* ZQNetworkManagerPrefixHeader.pch in Headers */,
 				95A1C7E21E2C69FC0031F65B /* ZQInterfaceConfigure.h in Headers */,
 				95B23C8A1E348C6B00F09048 /* ZQNetworkCacheCenter.h in Headers */,
 				95B23C781E309D9B00F09048 /* ZQNetworkCenter.h in Headers */,
@@ -374,7 +370,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "$(SRCROOT)/ZQNetworkManager/ZQNetworkManagerPrefixHeader.pch";
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = ZQNetworkManager/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -394,7 +390,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "$(SRCROOT)/ZQNetworkManager/ZQNetworkManagerPrefixHeader.pch";
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = ZQNetworkManager/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
