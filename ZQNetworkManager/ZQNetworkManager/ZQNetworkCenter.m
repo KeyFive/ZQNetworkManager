@@ -9,8 +9,6 @@
 #import "ZQNetworkCenter.h"
 #import "ZQNetworkCacheCenter.h"
 #import <AFNetworking/AFNetworking.h>
-#import <YYCategories/YYCategories.h>
-#import <YYModel/YYModel.h>
 
 NSString * const ZQNetworkCacheName = @"zq_network_cache_name";
 

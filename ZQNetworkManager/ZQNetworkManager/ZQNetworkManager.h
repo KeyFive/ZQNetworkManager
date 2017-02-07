@@ -1,27 +1,21 @@
 //
-//  ZQRequestManager.h
+//  ZQNetworkManager.h
 //  ZQNetworkManager
 //
-//  Created by zhiqiangcao on 17/1/16.
+//  Created by zhiqiangcao on 17/1/13.
 //  Copyright © 2017年 ZQ. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
-#import "ZQNetworkRequest.h"
 
-NS_ASSUME_NONNULL_BEGIN
+//! Project version number for ZQNetworkManager.
+FOUNDATION_EXPORT double ZQNetworkManagerVersionNumber;
 
-@interface ZQNetworkManager : NSObject
+//! Project version string for ZQNetworkManager.
+FOUNDATION_EXPORT const unsigned char ZQNetworkManagerVersionString[];
 
-@property (nonatomic, strong, nullable) id<ZQInterfaceActivitConfigure> activityConfigure;
-@property (nonatomic, copy, readonly) NSString *managerName;
+// In this header, you should import all the public headers of your framework using statements like #import <ZQNetworkManager/PublicHeader.h>
 
-+ (instancetype)requestManagerWithInterfaceConfigure:(id<ZQInterfaceConfigure>)configure manamgerName:(NSString *)managerName;
-- (instancetype)initWithInterfaceConfigure:(id<ZQInterfaceConfigure>)configure manamgerName:(NSString *)managerName;
-
-- (void)request:(ZQNetworkRequest *)request finishedBlock:(ZQRequestFinishedBlock)finishedBlock;
-- (void)fileUploadRequest:(ZQUploadFileRequest *)request finishedBlock:(ZQRequestFinishedBlock)finishedBlock;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "ZQRequestManager.h"
+#import "ZQInterfaceConfigure.h"

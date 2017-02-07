@@ -6,11 +6,11 @@
 //  Copyright © 2017年 ZQ. All rights reserved.
 //
 
-#import "ZQNetworkManager.h"
+#import "ZQRequestManager.h"
 #import "ZQInterfaceManager.h"
 #import "ZQNetworkCenter.h"
 
-@interface ZQNetworkManager()
+@interface ZQRequestManager()
 
 @property (nonatomic, strong) id<ZQInterfaceConfigure> configure;
 @property (nonatomic, strong) ZQInterfaceManager *interfaceManager;
@@ -19,7 +19,7 @@
 
 @end
 
-@implementation ZQNetworkManager
+@implementation ZQRequestManager
 
 #pragma mark - class method
 
