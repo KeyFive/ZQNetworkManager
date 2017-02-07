@@ -1,0 +1,6 @@
+framework module ZQNetworkManager {
+  umbrella header "ZQNetworkManager-umbrella.h"
+
+  export *
+  module * { export * }
+}
