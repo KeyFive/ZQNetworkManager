@@ -5,22 +5,24 @@ PODS:
   - FBSnapshotTestCase/SwiftSupport (2.1.4):
     - FBSnapshotTestCase/Core
   - Kiwi (2.4.0)
-  - ZQNetworkManager (0.2.0)
+  - YYCache (1.0.4)
+  - YYModel (1.0.4)
+  - ZQNetworkManager (0.4.0):
+    - YYCache (~> 1.0.4)
+    - YYModel (~> 1.0.4)
 
 DEPENDENCIES:
   - FBSnapshotTestCase
   - Kiwi
-  - ZQNetworkManager (from `../ZQNetworkManager.podspec`)
-
-EXTERNAL SOURCES:
-  ZQNetworkManager:
-    :podspec: ../ZQNetworkManager.podspec
+  - ZQNetworkManager
 
 SPEC CHECKSUMS:
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
   Kiwi: f49c9d54b28917df5928fe44968a39ed198cb8a8
-  ZQNetworkManager: 98d955df3c7aa7095c77d0dbb39aeb7dc8339bc1
+  YYCache: 8105b6638f5e849296c71f331ff83891a4942952
+  YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
+  ZQNetworkManager: 5e5e793ea582a4e60cd9e79efb8a0fca88a6f66b
 
-PODFILE CHECKSUM: bb8c9120876ce2444793ecbfd222b97b0f18d3a4
+PODFILE CHECKSUM: 6da39bec3fc561987495a0bbbe31f7bd11f200a5
 
 COCOAPODS: 1.2.0.beta.3
