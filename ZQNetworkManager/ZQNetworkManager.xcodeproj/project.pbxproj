@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		95A1C7DF1E2C69230031F65B /* ZQRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A1C7DD1E2C69230031F65B /* ZQRequestManager.h */; };
+		95A1C7DF1E2C69230031F65B /* ZQRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A1C7DD1E2C69230031F65B /* ZQRequestManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		95A1C7E01E2C69230031F65B /* ZQRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A1C7DE1E2C69230031F65B /* ZQRequestManager.m */; };
 		95A1C7E21E2C69FC0031F65B /* ZQInterfaceConfigure.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A1C7E11E2C69FC0031F65B /* ZQInterfaceConfigure.h */; };
 		95A1C7E51E2C6A370031F65B /* ZQInterfaceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A1C7E31E2C6A370031F65B /* ZQInterfaceManager.h */; };
 		95A1C7E61E2C6A370031F65B /* ZQInterfaceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A1C7E41E2C6A370031F65B /* ZQInterfaceManager.m */; };
-		95A1C7ED1E2C75C70031F65B /* ZQNetworkRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A1C7EB1E2C75C70031F65B /* ZQNetworkRequest.h */; };
+		95A1C7ED1E2C75C70031F65B /* ZQNetworkRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A1C7EB1E2C75C70031F65B /* ZQNetworkRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		95A1C7EE1E2C75C70031F65B /* ZQNetworkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A1C7EC1E2C75C70031F65B /* ZQNetworkRequest.m */; };
 		95A1C7F11E2CD34D0031F65B /* ZQRequestModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 95A1C7EF1E2CD34D0031F65B /* ZQRequestModel.h */; };
 		95A1C7F21E2CD34D0031F65B /* ZQRequestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 95A1C7F01E2CD34D0031F65B /* ZQRequestModel.m */; };
@@ -140,9 +140,9 @@
 			files = (
 				95A1C7ED1E2C75C70031F65B /* ZQNetworkRequest.h in Headers */,
 				95A3F9071E28A49D005F1F68 /* ZQNetworkManager.h in Headers */,
+				95A1C7DF1E2C69230031F65B /* ZQRequestManager.h in Headers */,
 				95A1C7E51E2C6A370031F65B /* ZQInterfaceManager.h in Headers */,
 				95A1C7F11E2CD34D0031F65B /* ZQRequestModel.h in Headers */,
-				95A1C7DF1E2C69230031F65B /* ZQRequestManager.h in Headers */,
 				95A1C7E21E2C69FC0031F65B /* ZQInterfaceConfigure.h in Headers */,
 				95B23C8A1E348C6B00F09048 /* ZQNetworkCacheCenter.h in Headers */,
 				95B23C781E309D9B00F09048 /* ZQNetworkCenter.h in Headers */,

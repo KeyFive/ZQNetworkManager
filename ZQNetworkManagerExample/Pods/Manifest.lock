@@ -1,0 +1,44 @@
+PODS:
+  - AFNetworking (3.1.0):
+    - AFNetworking/NSURLSession (= 3.1.0)
+    - AFNetworking/Reachability (= 3.1.0)
+    - AFNetworking/Security (= 3.1.0)
+    - AFNetworking/Serialization (= 3.1.0)
+    - AFNetworking/UIKit (= 3.1.0)
+  - AFNetworking/NSURLSession (3.1.0):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (3.1.0)
+  - AFNetworking/Security (3.1.0)
+  - AFNetworking/Serialization (3.1.0)
+  - AFNetworking/UIKit (3.1.0):
+    - AFNetworking/NSURLSession
+  - YYCache (1.0.4)
+  - YYCategories (1.0.4):
+    - YYCategories/no-arc (= 1.0.4)
+  - YYCategories/no-arc (1.0.4)
+  - YYModel (1.0.4)
+  - ZQNetworkManager (1.0.0):
+    - AFNetworking (~> 3.1.0)
+    - YYCache (~> 1.0.4)
+    - YYCategories (~> 1.0.4)
+    - YYModel (~> 1.0.4)
+
+DEPENDENCIES:
+  - AFNetworking (~> 3.1.0)
+  - YYCache (~> 1.0.4)
+  - YYCategories (~> 1.0.4)
+  - YYModel (~> 1.0.4)
+  - ZQNetworkManager
+
+SPEC CHECKSUMS:
+  AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  YYCache: 8105b6638f5e849296c71f331ff83891a4942952
+  YYCategories: 6bcd4314c6661a561410dce4a793379ebd306abd
+  YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
+  ZQNetworkManager: c29fcad22f9b524fbe28cdb7764221fb284f2dc9
+
+PODFILE CHECKSUM: 0bf166885018b5d11dd0f7a9f8bb0f5b1cd7cb96
+
+COCOAPODS: 1.2.0.beta.3

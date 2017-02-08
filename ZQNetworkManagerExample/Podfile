@@ -1,0 +1,16 @@
+
+# open source
+source 'https://github.com/CocoaPods/Specs.git'
+# personal source
+source 'https://github.com/KeyFive/ZQPodSpec.git'
+
+inhibit_all_warnings!
+use_frameworks!
+
+target 'ZQNetworkManagerExample' do
+  pod 'AFNetworking', '~> 3.1.0'
+  pod 'YYModel', '~>1.0.4'
+  pod 'YYCache', '~>1.0.4'
+  pod 'YYCategories', '~>1.0.4'
+  pod 'ZQNetworkManager'
+end
