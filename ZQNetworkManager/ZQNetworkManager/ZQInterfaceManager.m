@@ -66,6 +66,12 @@
     {
         requestModel.cacheValidityTimeInterval = [self.configure cacheValidityTimeIntervalForRequestName:request.name];
     }
+        //处理策略
+    if ([self.configure respondsToSelector:@selector(dealPolicyForRequestName:)])
+    {
+        requestModel.dealPolicy = [self.configure dealPolicyForRequestName:request.name];
+    }
+
     return requestModel;
 }
 
@@ -78,6 +84,12 @@
     requestModel.responseClassName = request.responseClassName;
     requestModel.progressBlock = request.progressBlock;
     requestModel.files = request.files;
+        //处理策略
+    if ([self.configure respondsToSelector:@selector(dealPolicyForRequestName:)])
+    {
+        requestModel.dealPolicy = [self.configure dealPolicyForRequestName:request.name];
+    }
+
     return requestModel;
 }
 

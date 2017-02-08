@@ -31,6 +31,7 @@ static dispatch_semaphore_t serverSignal;
 @property (nonatomic, strong) ZQNetworkCacheCenter *cacheCenter;
 
 - (BOOL)isWifiOnlyForRequestName:(NSString *)name;
+- (void)dealWithErrorRequest:(ZQRequestModel *)request responseObject:(NSError *)error finishedBlock:(ZQRequestFinishedBlock)block;
 
 @end
 
@@ -254,31 +255,46 @@ static ZQNetworkServer *networkServcer = nil;
     dispatch_semaphore_signal(serverSignal);
 }
 
-- (void)addOperation:(NSOperation *)operation name:(NSString *)name wifiOnly:(BOOL)isWifiOnly requestName:(NSString *)requestName;
+- (void)addOperation:(NSOperation *)operation name:(NSString *)name request:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block;
 {
     dispatch_semaphore_wait(serverSignal, DISPATCH_TIME_FOREVER);
+    ZQNetworkCenter *center = [self.networkCenters objectForKey:name];
     switch (self.networkReachabilityManager.networkReachabilityStatus)
     {
         case AFNetworkReachabilityStatusNotReachable:
         {
-            [self addWaitingOperation:operation name:name requestName:requestName];
+            if (request.dealPolicy == ZQDealPolicyAllowDelay)
+            {
+                [self addWaitingOperation:operation name:name requestName:request.name];
+            }
+            else
+            {
+                [center dealWithErrorRequest:request responseObject:[NSError errorWithDomain:@"网络连接不可用" code:0 userInfo:nil] finishedBlock:block];
+            }
             break;
         }
         case AFNetworkReachabilityStatusReachableViaWWAN:
         {
-            if (isWifiOnly)
+            if ([center isWifiOnlyForRequestName:request.name])
             {
-                [self addWaitingOperation:operation name:name requestName:requestName];
+                if (request.dealPolicy == ZQDealPolicyAllowDelay)
+                {
+                    [self addWaitingOperation:operation name:name requestName:request.name];
+                }
+                else
+                {
+                    [center dealWithErrorRequest:request responseObject:[NSError errorWithDomain:@"网络连接不可用" code:0 userInfo:nil] finishedBlock:block];
+                }
             }
             else
             {
-                [self addRunningOperation:operation name:name requestName:requestName];
+                [self addRunningOperation:operation name:name requestName:request.name];
             }
             break;
         }
         case AFNetworkReachabilityStatusReachableViaWiFi:
         {
-            [self addRunningOperation:operation name:name requestName:requestName];
+            [self addRunningOperation:operation name:name requestName:request.name];
             break;
         }
         default:
@@ -412,30 +428,6 @@ static ZQNetworkServer *networkServcer = nil;
 
 - (void)beginRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
 {
-    if ([self.activityConfigure respondsToSelector:@selector(paramsDealForRequestName:params:)])
-    {
-        request.params = [self.activityConfigure paramsDealForRequestName:request.name params:request.params];
-    }
-
-    if (request.requestPolicy == ZQRequestPolicyCacheThenNet || request.requestPolicy == ZQRequestPolicyOnlyCache)
-    {
-        NSDictionary *cacheInfo= [self dealCacheRequest:request];
-        if (cacheInfo)
-        {
-            [self analysisUsefulInfo:cacheInfo request:request finishedBlock:block];
-            return;
-        }
-        else
-        {
-            if (request.requestPolicy == ZQRequestPolicyOnlyCache)
-            {
-                NSError *cacheError = [NSError errorWithDomain:@"未找到缓存数据" code:0 userInfo:nil];
-                [self dealWithErrorRequest:request responseObject:cacheError finishedBlock:block];
-                return;
-            }
-        }
-    }
-
     [self confirmHttpSessionWithRequestName:request.name];
     switch (request.method)
     {
@@ -569,19 +561,52 @@ static ZQNetworkServer *networkServcer = nil;
     });
 }
 
+- (BOOL)predealRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
+{
+    BOOL dealFinished = NO;
+    if ([self.activityConfigure respondsToSelector:@selector(paramsDealForRequestName:params:)])
+    {
+        request.params = [self.activityConfigure paramsDealForRequestName:request.name params:request.params];
+    }
+
+    if (request.requestPolicy == ZQRequestPolicyCacheThenNet || request.requestPolicy == ZQRequestPolicyOnlyCache)
+    {
+        NSDictionary *cacheInfo= [self dealCacheRequest:request];
+        if (cacheInfo)
+        {
+            [self analysisUsefulInfo:cacheInfo request:request finishedBlock:block];
+            dealFinished = YES;
+        }
+        else
+        {
+            if (request.requestPolicy == ZQRequestPolicyOnlyCache)
+            {
+                NSError *cacheError = [NSError errorWithDomain:@"未找到缓存数据" code:0 userInfo:nil];
+                [self dealWithErrorRequest:request responseObject:cacheError finishedBlock:block];
+                dealFinished = YES;
+            }
+        }
+    }
+    return dealFinished;
+}
+
 #pragma mark - public method
 - (void)handleRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
 {
-    @weakify(self);
-    NSBlockOperation *blockOperation = [NSBlockOperation blockOperationWithBlock:^{
-        @strongify(self);
-        [self beginRequest:request finishedBlock:block];
-    }];
-    blockOperation.completionBlock = ^{
-        @strongify(self);
-        [self.server completionOperationWithName:self.centerName requestName:request.name];
-    };
-    [self.server addOperation:blockOperation name:self.centerName wifiOnly:[self isWifiOnlyForRequestName:request.name] requestName:request.name];
+
+    if (![self predealRequest:request finishedBlock:block])
+    {
+        @weakify(self);
+        NSBlockOperation *blockOperation = [NSBlockOperation blockOperationWithBlock:^{
+            @strongify(self);
+            [self beginRequest:request finishedBlock:block];
+        }];
+        blockOperation.completionBlock = ^{
+            @strongify(self);
+            [self.server completionOperationWithName:self.centerName requestName:request.name];
+        };
+        [self.server addOperation:blockOperation name:self.centerName request:request finishedBlock:block];
+    }
 }
 
 - (void)handleFileUploadRequest:(ZQFileUploadRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
@@ -595,7 +620,7 @@ static ZQNetworkServer *networkServcer = nil;
         @strongify(self);
         [self.server completionOperationWithName:self.centerName requestName:request.name];
     };
-    [self.server addOperation:blockOperation name:self.centerName wifiOnly:[self isWifiOnlyForRequestName:request.name] requestName:request.name];
+    [self.server addOperation:blockOperation name:self.centerName request:request finishedBlock:block];
 }
 
 - (BOOL)isWifiOnlyForRequestName:(NSString *)name

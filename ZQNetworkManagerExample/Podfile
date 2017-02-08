@@ -2,7 +2,7 @@
 # open source
 source 'https://github.com/CocoaPods/Specs.git'
 # personal source
-source 'https://github.com/KeyFive/ZQPodSpec.git'
+#source 'https://github.com/KeyFive/ZQPodSpec.git'
 
 inhibit_all_warnings!
 use_frameworks!

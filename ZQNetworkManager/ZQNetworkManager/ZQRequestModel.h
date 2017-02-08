@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) ZQRequestPolicy requestPolicy;//请求策略
 @property (nonatomic, assign) ZQCachePolicy cachePolicy;//缓存策略
 @property (nonatomic, assign) NSTimeInterval cacheValidityTimeInterval;//缓存有效期
+@property (nonatomic, assign) ZQDealPolicy dealPolicy;//处理策略
 
 @end
 

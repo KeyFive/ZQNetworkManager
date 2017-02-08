@@ -48,6 +48,15 @@
     return _cacheValidityTimeInterval;
 }
 
+- (ZQDealPolicy)dealPolicy
+{
+    if (!_dealPolicy)
+    {
+        _dealPolicy = ZQDealPolicyImmediately;
+    }
+    return _dealPolicy;
+}
+
 @end
 
 @implementation ZQFileUploadRequestModel

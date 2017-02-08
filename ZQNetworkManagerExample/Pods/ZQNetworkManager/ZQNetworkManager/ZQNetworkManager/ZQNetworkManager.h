@@ -16,4 +16,12 @@ FOUNDATION_EXPORT double ZQNetworkManagerVersionNumber;
 FOUNDATION_EXPORT const unsigned char ZQNetworkManagerVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <ZQNetworkManager/PublicHeader.h>
+#if __has_include(<ZQNetworkManager/ZQNetworkManager.h>)
 #import <ZQNetworkManager/ZQRequestManager.h>
+#import <ZQNetworkManager/ZQInterfaceConfigure.h>
+#import <ZQNetworkManager/ZQNetworkRequest.h>
+#else
+#import "ZQInterfaceConfigure.h"
+#import "ZQRequestManager.h"
+#import "ZQNetworkRequest.h"
+#endif

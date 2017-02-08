@@ -32,7 +32,13 @@ typedef NS_ENUM(NSUInteger, ZQCachePolicy)
     ZQCachePolicyDisk,//存储在硬盘中
     ZQCachePolicyUnion,//两个都有
     ZQCachePolicyNone//没有缓存
-} ;
+};
+
+typedef NS_ENUM(NSUInteger, ZQDealPolicy)
+{
+    ZQDealPolicyImmediately = 1,
+    ZQDealPolicyAllowDelay
+};
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -49,6 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (ZQRequestPolicy)requestPolicyForRequestName:(NSString *)name;//请求策略
 - (ZQCachePolicy)cachePolicyForRequestName:(NSString *)name;//缓存策略
 - (NSTimeInterval)cacheValidityTimeIntervalForRequestName:(NSString *)name;//缓存的有效期
+- (ZQDealPolicy)dealPolicyForRequestName:(NSString *)name;
 
 @end
 
