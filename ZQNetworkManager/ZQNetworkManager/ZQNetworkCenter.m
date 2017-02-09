@@ -604,11 +604,21 @@ static ZQNetworkServer *networkServcer = nil;
 
 - (void)analysisUsefulInfo:(NSDictionary *)usefulInfo request:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
 {
-    NSObject *responseObjct = [NSClassFromString(request.responseClassName) yy_modelWithDictionary:usefulInfo];
-    dispatch_async(dispatch_get_main_queue(), ^{
-         block(responseObjct, nil);
-    });
+    if ([request.responseClassName isEqualToString:@"NSDictionary"])
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            block(usefulInfo, nil);
+        });
+    }
+    else
+    {
+        NSObject *responseObjct = [NSClassFromString(request.responseClassName) yy_modelWithDictionary:usefulInfo];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            block(responseObjct, nil);
+        });
+    }
 }
+
 
 - (BOOL)predealRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
 {
