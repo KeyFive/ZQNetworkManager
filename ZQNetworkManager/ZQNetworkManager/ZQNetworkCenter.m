@@ -29,6 +29,7 @@ static dispatch_semaphore_t serverSignal;
 @property (nonatomic, strong) AFHTTPSessionManager *manager;
 @property (nonatomic, weak) ZQNetworkServer *server;
 @property (nonatomic, strong) ZQNetworkCacheCenter *cacheCenter;
+@property (nonatomic, strong) AFNetworkReachabilityManager *networkReachabilityManager;
 
 - (BOOL)isWifiOnlyForRequestName:(NSString *)name;
 - (void)dealWithErrorRequest:(ZQRequestModel *)request responseObject:(NSError *)error finishedBlock:(ZQRequestFinishedBlock)block;
@@ -39,7 +40,6 @@ static dispatch_semaphore_t serverSignal;
 
 @property (nonatomic, strong) NSMapTable *networkCenters;
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
-@property (nonatomic, strong) AFNetworkReachabilityManager *networkReachabilityManager;
 @property (nonatomic, strong) NSMutableDictionary *runningOperationes;//正在执行的请求
 @property (nonatomic, strong) NSMutableDictionary *waitingOperationes;//正在等待执行的请求
 
@@ -70,34 +70,6 @@ static ZQNetworkServer *networkServcer = nil;
     self = [super init];
     if (self)
     {
-        @weakify(self);
-        [self.networkReachabilityManager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
-            @strongify(self);
-            dispatch_semaphore_wait(serverSignal, DISPATCH_TIME_FOREVER);
-            [self cleanUnvalidOperation];
-            switch (status)
-            {
-                case AFNetworkReachabilityStatusNotReachable:
-                {
-                    [self dealOperationWithNoNetStatus];
-                    break;
-                }
-                case AFNetworkReachabilityStatusReachableViaWWAN:
-                {
-                    [self dealOperationWithWANStatus];
-                    break;
-                }
-                case AFNetworkReachabilityStatusReachableViaWiFi:
-                {
-                    [self dealOperationWithWiFiStatus];
-                    break;
-                }
-                default:
-                    break;
-            }
-            dispatch_semaphore_signal(serverSignal);
-        }];
-        [self.networkReachabilityManager startMonitoring];
         NSTimeInterval cleanUnvalidOperationTimeInterval = 60 * 10;
         [NSTimer scheduledTimerWithTimeInterval:cleanUnvalidOperationTimeInterval target:self selector:@selector(cleanUnvalidOperationCirculation) userInfo:nil repeats:YES];
     }
@@ -105,6 +77,32 @@ static ZQNetworkServer *networkServcer = nil;
 }
 
 #pragma mark - private method
+
+- (void)dealWithNetworkStatus:(AFNetworkReachabilityStatus)status changeCenterName:(NSString *)centerName
+{
+    dispatch_semaphore_wait(serverSignal, DISPATCH_TIME_FOREVER);
+    switch (status)
+    {
+        case AFNetworkReachabilityStatusNotReachable:
+        {
+            [self dealOperationWithNoNetStatusWithCenterName:centerName];
+            break;
+        }
+        case AFNetworkReachabilityStatusReachableViaWWAN:
+        {
+            [self dealOperationWithWANStatusWithCenterName:centerName];
+            break;
+        }
+        case AFNetworkReachabilityStatusReachableViaWiFi:
+        {
+            [self dealOperationWithWiFiStatusWithCenterName:centerName];
+            break;
+        }
+        default:
+            break;
+    }
+    dispatch_semaphore_signal(serverSignal);
+}
 
 - (void)cleanUnvalidOperationCirculation
 {
@@ -147,58 +145,99 @@ static ZQNetworkServer *networkServcer = nil;
     return unvalidKeys;
 }
 
-- (void)dealOperationWithNoNetStatus
+- (void)dealOperationWithNoNetStatusWithCenterName:(NSString *)centerName
 {
     for (NSString *key in self.runningOperationes.allKeys)
     {
-        NSMutableDictionary *operations = self.runningOperationes[key];
-        for (NSString *operationKey in operations.allKeys)
+        ZQNetworkCenter *center = [self.networkCenters objectForKey:key];
+        if ([centerName isEqualToString:key] && center)
         {
-            NSOperation *operation = operations[operationKey];
-            [operation cancel];
-            [self addWaitingOperation:operation name:key requestName:operationKey];
+            NSMutableDictionary *operations = self.runningOperationes[key];
+            for (NSString *operationKey in operations.allKeys)
+            {
+                NSOperation *operation = operations[operationKey];
+                [operation cancel];
+                [self addWaitingOperation:operation name:key requestName:operationKey];
+            }
+            break;
         }
     }
-    [self.runningOperationes removeAllObjects];
+    [self.runningOperationes removeObjectForKey:centerName];
 }
 
-- (void)dealOperationWithWANStatus
+- (void)dealOperationWithWANStatusWithCenterName:(NSString *)centerName
+{
+    ZQNetworkCenter *center = [self.networkCenters objectForKey:centerName];
+    if (center)
+    {
+        for (NSString *key in self.waitingOperationes.allKeys)
+        {
+
+            if ([centerName isEqualToString:key])
+            {
+                NSMutableArray *runningOperationsKey = [NSMutableArray array];
+                NSMutableDictionary *operations = self.waitingOperationes[key];
+                for (NSString *operationKey in operations.allKeys)
+                {
+                    if (![center isWifiOnlyForRequestName:operationKey])
+                    {
+                        NSOperation *operation = operations[operationKey];
+                        [self addRunningOperation:operation name:key requestName:operationKey];
+                        [runningOperationsKey addObject:operationKey];
+                    }
+                }
+                [operations removeObjectsForKeys:runningOperationsKey];
+                break;
+            }
+        }
+
+        for (NSString *key in self.runningOperationes.allKeys)
+        {
+            if ([centerName isEqualToString:key])
+            {
+                NSMutableArray *waitingOperationsKey = [NSMutableArray array];
+                NSMutableDictionary *operations = self.runningOperationes[key];
+                for (NSString *operationKey in operations.allKeys)
+                {
+                    NSOperation *operation = operations[operationKey];
+                    if ([center isWifiOnlyForRequestName:operationKey])
+                    {
+                        [operation cancel];
+                        [self addWaitingOperation:operation name:key requestName:operationKey];
+                        [waitingOperationsKey addObject:operationKey];
+                    }
+                }
+                [operations removeObjectsForKeys:waitingOperationsKey];
+                break;
+            }
+        }
+        [self.runningOperationes removeObjectForKey:centerName];
+    }
+    else
+    {
+        [self.waitingOperationes removeObjectForKey:centerName];
+        [self.runningOperationes removeObjectForKey:centerName];
+    }
+}
+
+- (void)dealOperationWithWiFiStatusWithCenterName:(NSString *)centerName
 {
     for (NSString *key in self.waitingOperationes.allKeys)
     {
         ZQNetworkCenter *center = [self.networkCenters objectForKey:key];
-        if (center)
+        if ([key isEqualToString:centerName] && center)
         {
             NSMutableArray *runningOperationsKey = [NSMutableArray array];
             NSMutableDictionary *operations = self.waitingOperationes[key];
             for (NSString *operationKey in operations.allKeys)
             {
-                if (![center isWifiOnlyForRequestName:operationKey])
-                {
-                    NSOperation *operation = operations[operationKey];
-                    [self addRunningOperation:operation name:key requestName:operationKey];
-                    [runningOperationsKey addObject:operationKey];
-                }
+                NSOperation *operation = operations[operationKey];
+                [self addRunningOperation:operation name:key requestName:operationKey];
+                [runningOperationsKey addObject:operationKey];
             }
-            [operations removeObjectsForKeys:runningOperationsKey];
         }
     }
-}
-
-- (void)dealOperationWithWiFiStatus
-{
-    for (NSString *key in self.waitingOperationes.allKeys)
-    {
-        NSMutableArray *runningOperationsKey = [NSMutableArray array];
-        NSMutableDictionary *operations = self.waitingOperationes[key];
-        for (NSString *operationKey in operations.allKeys)
-        {
-            NSOperation *operation = operations[operationKey];
-            [self addRunningOperation:operation name:key requestName:operationKey];
-            [runningOperationsKey addObject:operationKey];
-        }
-        [operations removeObjectsForKeys:runningOperationsKey];
-    }
+    [self.waitingOperationes removeObjectForKey:centerName];
 }
 
 - (void)addWaitingOperation:(NSOperation *)operation name:(NSString *)name requestName:(NSString *)requestName
@@ -255,11 +294,11 @@ static ZQNetworkServer *networkServcer = nil;
     dispatch_semaphore_signal(serverSignal);
 }
 
-- (void)addOperation:(NSOperation *)operation name:(NSString *)name request:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block;
+- (void)addOperation:(NSOperation *)operation name:(NSString *)name request:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block networkSatus:(AFNetworkReachabilityStatus)status
 {
     dispatch_semaphore_wait(serverSignal, DISPATCH_TIME_FOREVER);
     ZQNetworkCenter *center = [self.networkCenters objectForKey:name];
-    switch (self.networkReachabilityManager.networkReachabilityStatus)
+    switch (status)
     {
         case AFNetworkReachabilityStatusNotReachable:
         {
@@ -304,15 +343,6 @@ static ZQNetworkServer *networkServcer = nil;
 }
 
 #pragma mark - property
-
-- (AFNetworkReachabilityManager *)networkReachabilityManager
-{
-    if (!_networkReachabilityManager)
-    {
-        _networkReachabilityManager = [AFNetworkReachabilityManager sharedManager];
-    }
-    return _networkReachabilityManager;
-}
 
 - (NSMapTable *)networkCenters
 {
@@ -368,6 +398,21 @@ static ZQNetworkServer *networkServcer = nil;
     {
         self.centerName = centerName;
         self.configure = configure;
+        if ([self.configure respondsToSelector:@selector(domainForLink)])
+        {
+            self.networkReachabilityManager = [AFNetworkReachabilityManager managerForDomain:[self.configure domainForLink]];
+        }
+        else
+        {
+            self.networkReachabilityManager = [AFNetworkReachabilityManager manager];
+        }
+        @weakify(self);
+        [self.networkReachabilityManager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+            @strongify(self);
+            [self.server dealWithNetworkStatus:status changeCenterName:self.centerName];
+
+        }];
+        [self.networkReachabilityManager startMonitoring];
         [self.server addNetworkCenter:self];
     }
     return self;
@@ -609,7 +654,7 @@ static ZQNetworkServer *networkServcer = nil;
             @strongify(self);
             [self.server completionOperationWithName:self.centerName requestName:request.name];
         };
-        [self.server addOperation:blockOperation name:self.centerName request:request finishedBlock:block];
+        [self.server addOperation:blockOperation name:self.centerName request:request finishedBlock:block networkSatus:self.networkReachabilityManager.networkReachabilityStatus];
     }
 }
 
@@ -624,7 +669,7 @@ static ZQNetworkServer *networkServcer = nil;
         @strongify(self);
         [self.server completionOperationWithName:self.centerName requestName:request.name];
     };
-    [self.server addOperation:blockOperation name:self.centerName request:request finishedBlock:block];
+    [self.server addOperation:blockOperation name:self.centerName request:request finishedBlock:block networkSatus:self.networkReachabilityManager.networkReachabilityStatus];
 }
 
 - (BOOL)isWifiOnlyForRequestName:(NSString *)name
