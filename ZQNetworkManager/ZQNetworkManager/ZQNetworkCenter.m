@@ -424,6 +424,10 @@ static ZQNetworkServer *networkServcer = nil;
         self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
         [self.manager.responseSerializer setAcceptableContentTypes:acceptableContnetTypes];
     }
+    else
+    {
+        self.manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    }
 }
 
 - (void)beginRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
