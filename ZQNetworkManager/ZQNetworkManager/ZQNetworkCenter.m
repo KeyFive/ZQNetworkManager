@@ -10,7 +10,6 @@
 #import "ZQNetworkCacheCenter.h"
 #import <AFNetworking/AFNetworking.h>
 #import <YYCategories/YYCategories.h>
-#import <YYModel/YYModel.h>
 
 NSString * const ZQNetworkCacheName = @"zq_network_cache_name";
 
@@ -243,7 +242,7 @@ static ZQNetworkServer *networkServcer = nil;
 - (void)addWaitingOperation:(NSOperation *)operation name:(NSString *)name requestName:(NSString *)requestName
 {
     NSMutableDictionary *operations = [self.waitingOperationes objectForKey:name];
-    if (!operation)
+    if (!operations)
     {
         operations = [NSMutableDictionary dictionary];
     }
@@ -254,7 +253,7 @@ static ZQNetworkServer *networkServcer = nil;
 - (void)addRunningOperation:(NSOperation *)operation name:(NSString *)name requestName:(NSString *)requestName
 {
     NSMutableDictionary *operations = [self.runningOperationes objectForKey:name];
-    if (!operation)
+    if (!operations)
     {
         operations = [NSMutableDictionary dictionary];
     }
@@ -333,6 +332,12 @@ static ZQNetworkServer *networkServcer = nil;
         }
         case AFNetworkReachabilityStatusReachableViaWiFi:
         {
+            [self addRunningOperation:operation name:name requestName:request.name];
+            break;
+        }
+        case AFNetworkReachabilityStatusUnknown:
+        {
+                //网络状态还不清楚时，默认发起网络请求
             [self addRunningOperation:operation name:name requestName:request.name];
             break;
         }
@@ -459,7 +464,7 @@ static ZQNetworkServer *networkServcer = nil;
         NSDictionary *httpheadFileds = [self.configure httpHeadFiledsForRequestName:name];
         for (NSString *key in httpheadFileds.allKeys)
         {
-            [self.manager setValue:httpheadFileds[key] forKey:key];
+            [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
         }
     }
 
@@ -562,8 +567,7 @@ static ZQNetworkServer *networkServcer = nil;
 - (void)dealWithSuccessRequest:(ZQRequestModel *)request responseObject:(id)responseObject finishedBlock:(ZQRequestFinishedBlock)block
 {
     NSError *responseError = nil;
-    NSDictionary *responseInfo = [self.activityConfigure responseInfoFromObject:responseObject];
-    [self.activityConfigure validResponseInfo:responseInfo error:&responseError];
+    NSDictionary *responseInfo = [self.activityConfigure responseInfoFromObject:responseObject error:&responseError];
     if (responseError)
     {
             //返回错误
@@ -572,9 +576,8 @@ static ZQNetworkServer *networkServcer = nil;
     else
     {
             //正确
-        NSDictionary *usefulInfo = [self.activityConfigure usefulInfoWithResponseInfo:responseInfo];
-        [self cacheRequest:request cacheInfo:usefulInfo];
-        [self analysisUsefulInfo:usefulInfo request:request finishedBlock:block];
+        [self analysisUsefulInfo:responseInfo request:request finishedBlock:block];
+         [self cacheRequest:request cacheInfo:responseInfo];
     }
 }
 
@@ -604,21 +607,10 @@ static ZQNetworkServer *networkServcer = nil;
 
 - (void)analysisUsefulInfo:(NSDictionary *)usefulInfo request:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
 {
-    if ([request.responseClassName isEqualToString:@"NSDictionary"])
-    {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            block(usefulInfo, nil);
-        });
-    }
-    else
-    {
-        NSObject *responseObjct = [NSClassFromString(request.responseClassName) yy_modelWithDictionary:usefulInfo];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            block(responseObjct, nil);
-        });
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+         block(usefulInfo, nil);
+    });
 }
-
 
 - (BOOL)predealRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
 {
@@ -708,6 +700,7 @@ static ZQNetworkServer *networkServcer = nil;
     if (!_manager)
     {
         _manager = [AFHTTPSessionManager manager];
+        _manager.requestSerializer.timeoutInterval = 10;
     }
     return _manager;
 }

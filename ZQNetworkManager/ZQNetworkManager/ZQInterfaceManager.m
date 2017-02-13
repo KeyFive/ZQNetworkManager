@@ -47,29 +47,28 @@
 {
     ZQRequestModel *requestModel = [[ZQRequestModel alloc] init];
     requestModel.name = request.name;
-    requestModel.method = [self.configure methodForRequestName:request.name];
-    requestModel.requestUrl = [self.configure urlForRequestName:request.name];
+    requestModel.method = [self.configure methodForRequestName:request.name userInfo:request.userInfo];
+    requestModel.requestUrl = [self.configure urlForRequestName:request.name userInfo:request.userInfo];
     requestModel.params = request.params;
-    requestModel.responseClassName = request.responseClassName;
         //请求策略
-    if ([self.configure respondsToSelector:@selector(requestPolicyForRequestName:)])
+    if ([self.configure respondsToSelector:@selector(requestPolicyForRequestName:userInfo:)])
     {
-        requestModel.requestPolicy = [self.configure requestPolicyForRequestName:request.name];
+        requestModel.requestPolicy = [self.configure requestPolicyForRequestName:request.name userInfo:request.userInfo];
     }
         //缓存策略
-    if ([self.configure respondsToSelector:@selector(cachePolicyForRequestName:)])
+    if ([self.configure respondsToSelector:@selector(cachePolicyForRequestName: userInfo:)])
     {
-        requestModel.cachePolicy = [self.configure cachePolicyForRequestName:request.name];
+        requestModel.cachePolicy = [self.configure cachePolicyForRequestName:request.name userInfo:request.userInfo];
     }
         //缓存时间
-    if ([self.configure respondsToSelector:@selector(cacheValidityTimeIntervalForRequestName:)])
+    if ([self.configure respondsToSelector:@selector(cacheValidityTimeIntervalForRequestName:userInfo:)])
     {
-        requestModel.cacheValidityTimeInterval = [self.configure cacheValidityTimeIntervalForRequestName:request.name];
+        requestModel.cacheValidityTimeInterval = [self.configure cacheValidityTimeIntervalForRequestName:request.name userInfo:request.userInfo];
     }
         //处理策略
-    if ([self.configure respondsToSelector:@selector(dealPolicyForRequestName:)])
+    if ([self.configure respondsToSelector:@selector(dealPolicyForRequestName: userInfo:)])
     {
-        requestModel.dealPolicy = [self.configure dealPolicyForRequestName:request.name];
+        requestModel.dealPolicy = [self.configure dealPolicyForRequestName:request.name userInfo:request.userInfo];
     }
 
     return requestModel;
@@ -79,15 +78,14 @@
 {
     ZQFileUploadRequestModel *requestModel = [[ZQFileUploadRequestModel alloc] init];
     requestModel.name = request.name;
-    requestModel.requestUrl = [self.configure urlForRequestName:request.name];
+    requestModel.requestUrl = [self.configure urlForRequestName:request.name userInfo:request.userInfo];
     requestModel.params = request.params;
-    requestModel.responseClassName = request.responseClassName;
     requestModel.progressBlock = request.progressBlock;
     requestModel.files = request.files;
         //处理策略
-    if ([self.configure respondsToSelector:@selector(dealPolicyForRequestName:)])
+    if ([self.configure respondsToSelector:@selector(dealPolicyForRequestName:userInfo:)])
     {
-        requestModel.dealPolicy = [self.configure dealPolicyForRequestName:request.name];
+        requestModel.dealPolicy = [self.configure dealPolicyForRequestName:request.name userInfo:request.userInfo];
     }
 
     return requestModel;

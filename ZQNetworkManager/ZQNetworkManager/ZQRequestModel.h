@@ -16,7 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *name;//请求的接口名称
 @property (nonatomic, copy) NSString *requestUrl;//请求的url
 @property (nonatomic, copy, nullable) NSDictionary *params;//请求参数
-@property (nonatomic, copy) NSString *responseClassName;//请求成功返回的类名称
 @property (nonatomic, assign) ZQRequestMenthod method;//上传http method默认：ZQRequestMenthodGET
 @property (nonatomic, assign) ZQRequestPolicy requestPolicy;//请求策略
 @property (nonatomic, assign) ZQCachePolicy cachePolicy;//缓存策略

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-typedef  void(^ZQRequestFinishedBlock)(__nullable id responseObject, NSError * _Nullable error);
+typedef  void(^ZQRequestFinishedBlock)( NSDictionary * __nullable responseObject, NSError * __nullable error);
 
 typedef NS_ENUM(NSUInteger, ZQRequestMenthod)
 {
@@ -34,7 +34,7 @@ typedef NS_ENUM(NSUInteger, ZQCachePolicy)
     ZQCachePolicyNone//没有缓存
 };
 
-typedef NS_ENUM(NSUInteger, ZQDealPolicy)
+typedef NS_ENUM(NSUInteger, ZQDealPolicy)//即时处理，或者允许延时处理
 {
     ZQDealPolicyImmediately = 1,
     ZQDealPolicyAllowDelay
@@ -44,8 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZQInterfaceConfigure <NSObject>
 
-- (NSString *)urlForRequestName:(NSString *)name;//根据接口名称返回接口url
-- (ZQRequestMenthod)methodForRequestName:(NSString *)name;//调用接口的方法POST/GET
+- (NSString *)urlForRequestName:(NSString *)name userInfo:(nullable NSDictionary *)userInfo;//根据接口名称返回接口url
+- (ZQRequestMenthod)methodForRequestName:(NSString *)name userInfo:(nullable NSDictionary *)userInfo;//调用接口的方法POST/GET
 
 @optional
 
@@ -53,18 +53,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isWifiOnlyForRequestName:(NSString *)name;//是否只在wifi情况下进行请求
 - (NSSet *)acceptableContentTypesForRequestName:(NSString *)name;//需要复写acceptableContentTypes的可实现此方法否则用AF默认的
 - (NSDictionary *)httpHeadFiledsForRequestName:(NSString *)name;//需要设置得请求头
-- (ZQRequestPolicy)requestPolicyForRequestName:(NSString *)name;//请求策略
-- (ZQCachePolicy)cachePolicyForRequestName:(NSString *)name;//缓存策略
-- (NSTimeInterval)cacheValidityTimeIntervalForRequestName:(NSString *)name;//缓存的有效期
-- (ZQDealPolicy)dealPolicyForRequestName:(NSString *)name;
+- (ZQRequestPolicy)requestPolicyForRequestName:(NSString *)name userInfo:(nullable NSDictionary *)userInfo;//请求策略
+- (ZQCachePolicy)cachePolicyForRequestName:(NSString *)name userInfo:(nullable NSDictionary *)userInfo;//缓存策略
+- (NSTimeInterval)cacheValidityTimeIntervalForRequestName:(NSString *)name userInfo:(nullable NSDictionary *)userInfo;//缓存的有效期
+- (ZQDealPolicy)dealPolicyForRequestName:(NSString *)name userInfo:(nullable NSDictionary *)userInfo;
 
 @end
 
 @protocol ZQInterfaceActivitConfigure <NSObject>
 
-- (nullable NSDictionary *)responseInfoFromObject:(id)responseObject;
-- (nullable NSDictionary *)usefulInfoWithResponseInfo:(NSDictionary *)responseInfo;
-- (void)validResponseInfo:(NSDictionary *)responseInfo error:(NSError **)error;
+- (nullable NSDictionary *)responseInfoFromObject:(id)responseObject error:(NSError **)error;
 
 @optional
 - (NSDictionary *)paramsDealForRequestName:(NSString *)name params:(nullable NSDictionary *)params;//需要对参数对额外处理得可实现此方法

@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly ,copy) NSString *name;//请求接口的名称
 @property (nonatomic, copy, nullable) NSDictionary *params;//请求参数
-@property (nonatomic, copy) NSString *responseClassName;
+@property (nonatomic, copy) NSDictionary *userInfo;//附加参数，配置项根据附加参数进行处理
 
 - (instancetype)initWithRequestName:(NSString *)name NS_DESIGNATED_INITIALIZER;
 + (instancetype)requestWithName:(NSString *)name;

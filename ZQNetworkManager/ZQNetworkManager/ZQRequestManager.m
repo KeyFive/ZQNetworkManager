@@ -54,6 +54,7 @@
 
 - (void)request:(ZQNetworkRequest *)request finishedBlock:(ZQRequestFinishedBlock)finishedBlock
 {
+    NSLog(@"%@",request);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         ZQRequestModel *requestModel = [self.interfaceManager requestModelFromRequest:request];
         [self.networkCenter handleRequest:requestModel finishedBlock:finishedBlock];

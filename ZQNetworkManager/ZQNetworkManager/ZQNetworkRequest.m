@@ -20,7 +20,7 @@
 
 + (instancetype)requestWithName:(NSString *)name
 {
-    return [[self alloc] initWithName:name];
+    return [[self alloc] initWithRequestName:name];
 }
 
 #pragma mark - initial method
@@ -39,17 +39,6 @@
         self.name = name;
     }
     return self;
-}
-
-#pragma mark - property
-
-- (NSString *)responseClassName
-{
-    if (!_responseClassName)
-    {
-        _responseClassName = @"NSDictionary";
-    }
-    return _responseClassName;
 }
 
 @end

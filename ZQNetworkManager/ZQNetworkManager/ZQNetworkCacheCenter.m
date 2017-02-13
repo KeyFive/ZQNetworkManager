@@ -122,7 +122,7 @@ static ZQNetworkCacheCenter *cacheCenter = nil;
     NSMutableDictionary *cacheInfo = nil;
     if (responseInfo)
     {
-        NSMutableDictionary *cacheInfo = [NSMutableDictionary dictionaryWithDictionary:responseInfo];
+        cacheInfo = [NSMutableDictionary dictionaryWithDictionary:responseInfo];
         [cacheInfo setObject:[NSDate date] forKey:ZQCacheDateKey];
     }
     switch (cachePolicy)
