@@ -9,7 +9,7 @@
 #import "ZQNetworkCenter.h"
 #import "ZQNetworkCacheCenter.h"
 #import <AFNetworking/AFNetworking.h>
-#import <YYCategories/YYCategories.h>
+#import "ZQNetworkOperation.h"
 
 NSString * const ZQNetworkCacheName = @"zq_network_cache_name";
 
@@ -30,7 +30,7 @@ static dispatch_semaphore_t serverSignal;
 @property (nonatomic, strong) ZQNetworkCacheCenter *cacheCenter;
 @property (nonatomic, strong) AFNetworkReachabilityManager *networkReachabilityManager;
 
-- (BOOL)isWifiOnlyForRequestName:(NSString *)name;
+- (BOOL)isWiFiOnlyForRequestName:(NSString *)name;
 - (void)dealWithErrorRequest:(ZQRequestModel *)request responseObject:(NSError *)error finishedBlock:(ZQRequestFinishedBlock)block;
 
 @end
@@ -146,19 +146,22 @@ static ZQNetworkServer *networkServcer = nil;
 
 - (void)dealOperationWithNoNetStatusWithCenterName:(NSString *)centerName
 {
-    for (NSString *key in self.runningOperationes.allKeys)
+    ZQNetworkCenter *center = [self.networkCenters objectForKey:centerName];
+    if (center)
     {
-        ZQNetworkCenter *center = [self.networkCenters objectForKey:key];
-        if ([centerName isEqualToString:key] && center)
+        for (NSString *key in self.runningOperationes.allKeys)
         {
-            NSMutableDictionary *operations = self.runningOperationes[key];
-            for (NSString *operationKey in operations.allKeys)
+            if ([centerName isEqualToString:key])
             {
-                NSOperation *operation = operations[operationKey];
-                [operation cancel];
-                [self addWaitingOperation:operation name:key requestName:operationKey];
+                NSMutableDictionary *operations = self.runningOperationes[key];
+                for (NSString *operationKey in operations.allKeys)
+                {
+                    NSOperation *operation = operations[operationKey];
+                    [operation cancel];
+                    [self addWaitingOperation:operation name:key requestName:operationKey];
+                }
+                break;
             }
-            break;
         }
     }
     [self.runningOperationes removeObjectForKey:centerName];
@@ -178,7 +181,7 @@ static ZQNetworkServer *networkServcer = nil;
                 NSMutableDictionary *operations = self.waitingOperationes[key];
                 for (NSString *operationKey in operations.allKeys)
                 {
-                    if (![center isWifiOnlyForRequestName:operationKey])
+                    if (![center isWiFiOnlyForRequestName:operationKey])
                     {
                         NSOperation *operation = operations[operationKey];
                         [self addRunningOperation:operation name:key requestName:operationKey];
@@ -199,7 +202,7 @@ static ZQNetworkServer *networkServcer = nil;
                 for (NSString *operationKey in operations.allKeys)
                 {
                     NSOperation *operation = operations[operationKey];
-                    if ([center isWifiOnlyForRequestName:operationKey])
+                    if ([center isWiFiOnlyForRequestName:operationKey])
                     {
                         [operation cancel];
                         [self addWaitingOperation:operation name:key requestName:operationKey];
@@ -210,7 +213,6 @@ static ZQNetworkServer *networkServcer = nil;
                 break;
             }
         }
-        [self.runningOperationes removeObjectForKey:centerName];
     }
     else
     {
@@ -221,18 +223,20 @@ static ZQNetworkServer *networkServcer = nil;
 
 - (void)dealOperationWithWiFiStatusWithCenterName:(NSString *)centerName
 {
-    for (NSString *key in self.waitingOperationes.allKeys)
+    ZQNetworkCenter *center = [self.networkCenters objectForKey:centerName];
+    if (center)
     {
-        ZQNetworkCenter *center = [self.networkCenters objectForKey:key];
-        if ([key isEqualToString:centerName] && center)
+        for (NSString *key in self.waitingOperationes.allKeys)
         {
-            NSMutableArray *runningOperationsKey = [NSMutableArray array];
-            NSMutableDictionary *operations = self.waitingOperationes[key];
-            for (NSString *operationKey in operations.allKeys)
+
+            if ([key isEqualToString:centerName])
             {
-                NSOperation *operation = operations[operationKey];
-                [self addRunningOperation:operation name:key requestName:operationKey];
-                [runningOperationsKey addObject:operationKey];
+                NSMutableDictionary *operations = self.waitingOperationes[key];
+                for (NSString *operationKey in operations.allKeys)
+                {
+                    NSOperation *operation = operations[operationKey];
+                    [self addRunningOperation:operation name:key requestName:operationKey];
+                }
             }
         }
     }
@@ -257,7 +261,15 @@ static ZQNetworkServer *networkServcer = nil;
     {
         operations = [NSMutableDictionary dictionary];
     }
-    if (![operations objectForKey:requestName])
+    NSOperation *preoperation = [operations objectForKey:requestName];
+    if (preoperation)
+    {
+        [preoperation cancel];
+        [operations setObject:operation forKey:requestName];
+        [self.runningOperationes setObject:operations forKey:name];
+        [self.operationQueue addOperation:operation];
+    }
+    else
     {
         [operations setObject:operation forKey:requestName];
         [self.runningOperationes setObject:operations forKey:name];
@@ -313,7 +325,7 @@ static ZQNetworkServer *networkServcer = nil;
         }
         case AFNetworkReachabilityStatusReachableViaWWAN:
         {
-            if ([center isWifiOnlyForRequestName:request.name])
+            if ([center isWiFiOnlyForRequestName:request.name])
             {
                 if (request.dealPolicy == ZQDealPolicyAllowDelay)
                 {
@@ -480,19 +492,24 @@ static ZQNetworkServer *networkServcer = nil;
     }
 }
 
-- (void)beginRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
+- (void)beginRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block operation:(ZQNetworkOperation *)operation
 {
+    if (operation.isCancelled)
+    {
+        operation.finishedBlock();
+        return;
+    }
     [self confirmHttpSessionWithRequestName:request.name];
     switch (request.method)
     {
         case ZQRequestMenthodGET:
         {
-            [self dealWithGETRequest:request finishedBlock:block];
+            [self dealWithGETRequest:request finishedBlock:block operation:operation];
             break;
         }
         case ZQRequestMenthodPOST:
         {
-            [self dealWithPOSTRequest:request finishedBlock:block];
+            [self dealWithPOSTRequest:request finishedBlock:block operation:operation];
             break;
         }
         default:
@@ -500,7 +517,16 @@ static ZQNetworkServer *networkServcer = nil;
     }
 }
 
-- (void)dealWithGETRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
+- (void)checkOperationState:(ZQNetworkOperation *)operation block:(void(^)())block
+{
+    operation.finishedBlock();
+    if (!operation.isCancelled)
+    {
+        block();
+    }
+}
+
+- (void)dealWithGETRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block operation:(ZQNetworkOperation *)operation
 {
 
     @weakify(self);
@@ -508,31 +534,53 @@ static ZQNetworkServer *networkServcer = nil;
     [self.manager GET:request.requestUrl parameters:request.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         @strongify(self);
         [self endNetworkActivity:request.name];
-        [self dealWithSuccessRequest:request responseObject:responseObject finishedBlock:block];
+        @weakify(self);
+        [self checkOperationState:operation block:^{
+            @strongify(self);
+            [self dealWithSuccessRequest:request responseObject:responseObject finishedBlock:block];
+        }];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         @strongify(self);
         [self endNetworkActivity:request.name];
-        [self dealWithErrorRequest:request responseObject:error finishedBlock:block];
+        @weakify(self);
+        [self checkOperationState:operation block:^{
+            @strongify(self);
+            [self dealWithErrorRequest:request responseObject:error finishedBlock:block];
+        }];
     }];
 }
 
-- (void)dealWithPOSTRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
+- (void)dealWithPOSTRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block operation:(ZQNetworkOperation *)operation
 {
     [self beginNetworkActivity:request.name];
     @weakify(self);
     [self.manager POST:request.requestUrl parameters:request.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         @strongify(self);
         [self endNetworkActivity:request.name];
-        [self dealWithSuccessRequest:request responseObject:responseObject finishedBlock:block];
+        @weakify(self);
+        [self checkOperationState:operation block:^{
+            @strongify(self);
+            [self dealWithSuccessRequest:request responseObject:responseObject finishedBlock:block];
+        }];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         @strongify(self);
         [self endNetworkActivity:request.name];
-        [self dealWithErrorRequest:request responseObject:error finishedBlock:block];
+        @weakify(self);
+        [self checkOperationState:operation block:^{
+            @strongify(self);
+            [self dealWithErrorRequest:request responseObject:error finishedBlock:block];
+        }];
     }];
 }
 
-- (void)beginFileUploadRequest:(ZQFileUploadRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
+- (void)beginFileUploadRequest:(ZQFileUploadRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block operation:(ZQNetworkOperation *)operation
 {
+    if (operation.isCancelled)
+    {
+        operation.finishedBlock();
+        return;
+    }
+
     [self confirmHttpSessionWithRequestName:request.name];
     if ([self.activityConfigure respondsToSelector:@selector(paramsDealForRequestName:params:)])
     {
@@ -556,11 +604,19 @@ static ZQNetworkServer *networkServcer = nil;
     } progress:request.progressBlock success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         @strongify(self);
         [self endNetworkActivity:request.name];
-        [self dealWithSuccessRequest:request responseObject:responseObject finishedBlock:block];
+        @weakify(self);
+        [self checkOperationState:operation block:^{
+            @strongify(self);
+            [self dealWithSuccessRequest:request responseObject:responseObject finishedBlock:block];
+        }];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         @strongify(self);
         [self endNetworkActivity:request.name];
-        [self dealWithErrorRequest:request responseObject:error finishedBlock:block];
+        @weakify(self);
+        [self checkOperationState:operation block:^{
+            @strongify(self);
+            [self dealWithErrorRequest:request responseObject:error finishedBlock:block];
+        }];
     }];
 }
 
@@ -648,40 +704,46 @@ static ZQNetworkServer *networkServcer = nil;
     if (![self predealRequest:request finishedBlock:block])
     {
         @weakify(self);
-        NSBlockOperation *blockOperation = [NSBlockOperation blockOperationWithBlock:^{
+        ZQNetworkOperation *operation = [[ZQNetworkOperation alloc] init];
+        @weakify(operation);
+        operation.block = ^{
             @strongify(self);
-            [self beginRequest:request finishedBlock:block];
-        }];
-        blockOperation.completionBlock = ^{
+            @strongify(operation);
+            [self beginRequest:request finishedBlock:block operation:operation];
+        };
+        operation.completionBlock = ^{
             @strongify(self);
             [self.server completionOperationWithName:self.centerName requestName:request.name];
         };
-        [self.server addOperation:blockOperation name:self.centerName request:request finishedBlock:block networkSatus:self.networkReachabilityManager.networkReachabilityStatus];
+        [self.server addOperation:operation name:self.centerName request:request finishedBlock:block networkSatus:self.networkReachabilityManager.networkReachabilityStatus];
     }
 }
 
 - (void)handleFileUploadRequest:(ZQFileUploadRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block
 {
     @weakify(self);
-    NSBlockOperation *blockOperation = [NSBlockOperation blockOperationWithBlock:^{
+    ZQNetworkOperation *operation = [[ZQNetworkOperation alloc] init];
+    @weakify(operation);
+    operation.block = ^{
         @strongify(self);
-        [self beginFileUploadRequest:request finishedBlock:block];
-    }];
-    blockOperation.completionBlock = ^{
+        @strongify(operation);
+        [self beginFileUploadRequest:request finishedBlock:block operation:operation];
+    };
+    operation.completionBlock = ^{
         @strongify(self);
         [self.server completionOperationWithName:self.centerName requestName:request.name];
     };
-    [self.server addOperation:blockOperation name:self.centerName request:request finishedBlock:block networkSatus:self.networkReachabilityManager.networkReachabilityStatus];
+    [self.server addOperation:operation name:self.centerName request:request finishedBlock:block networkSatus:self.networkReachabilityManager.networkReachabilityStatus];
 }
 
-- (BOOL)isWifiOnlyForRequestName:(NSString *)name
+- (BOOL)isWiFiOnlyForRequestName:(NSString *)name
 {
-    BOOL isWifiOnly = NO;
-    if ([self.configure respondsToSelector:@selector(isWifiOnlyForRequestName:)])
+    BOOL isWiFiOnly = NO;
+    if ([self.configure respondsToSelector:@selector(isWiFiOnlyForRequestName:)])
     {
-        isWifiOnly = [self.configure isWifiOnlyForRequestName:name];
+        isWiFiOnly = [self.configure isWiFiOnlyForRequestName:name];
     }
-    return isWifiOnly;
+    return isWiFiOnly;
 }
 
 #pragma mark - property

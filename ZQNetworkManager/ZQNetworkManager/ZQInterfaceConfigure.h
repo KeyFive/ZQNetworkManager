@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 
 - (NSString *)domainForLink;//用来检测网络可用性
-- (BOOL)isWifiOnlyForRequestName:(NSString *)name;//是否只在wifi情况下进行请求
+- (BOOL)isWiFiOnlyForRequestName:(NSString *)name;//是否只在wifi情况下进行请求
 - (NSSet *)acceptableContentTypesForRequestName:(NSString *)name;//需要复写acceptableContentTypes的可实现此方法否则用AF默认的
 - (NSDictionary *)httpHeadFiledsForRequestName:(NSString *)name;//需要设置得请求头
 - (ZQRequestPolicy)requestPolicyForRequestName:(NSString *)name userInfo:(nullable NSDictionary *)userInfo;//请求策略
