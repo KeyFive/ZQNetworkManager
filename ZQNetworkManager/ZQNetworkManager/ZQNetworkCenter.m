@@ -496,7 +496,7 @@ static ZQNetworkServer *networkServcer = nil;
 {
     if (operation.isCancelled)
     {
-        operation.finishedBlock();
+        [operation finisheOperation];
         return;
     }
     [self confirmHttpSessionWithRequestName:request.name];
@@ -519,7 +519,7 @@ static ZQNetworkServer *networkServcer = nil;
 
 - (void)checkOperationState:(ZQNetworkOperation *)operation block:(void(^)())block
 {
-    operation.finishedBlock();
+    [operation finisheOperation];
     if (!operation.isCancelled)
     {
         block();
@@ -577,7 +577,7 @@ static ZQNetworkServer *networkServcer = nil;
 {
     if (operation.isCancelled)
     {
-        operation.finishedBlock();
+        [operation finisheOperation];
         return;
     }
 

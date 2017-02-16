@@ -25,13 +25,7 @@
     self = [super init];
     if (self)
     {
-        @weakify(self);
         self.lock = [[NSLock alloc] init];
-        _finishedBlock = ^
-        {
-            @strongify(self);
-            [self finisheOperation];
-        };
     }
     return self;
 }

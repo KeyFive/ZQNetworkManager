@@ -11,7 +11,7 @@
 
 @interface ZQNetworkOperation : NSOperation
 
-@property (nonatomic, strong, readonly) void(^finishedBlock)(void);//调用此block标明operation结束
 @property (nonatomic, strong) void(^block)(void);//执行的block
+- (void)finisheOperation;//结束操作
 
 @end
