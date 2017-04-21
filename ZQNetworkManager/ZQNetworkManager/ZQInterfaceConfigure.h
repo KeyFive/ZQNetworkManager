@@ -40,6 +40,12 @@ typedef NS_ENUM(NSUInteger, ZQDealPolicy)//即时处理，或者允许延时处�
     ZQDealPolicyAllowDelay
 };
 
+typedef NS_ENUM(NSInteger,ZQRequestErrorCode)
+{
+    ZQRequestErrorCodeNoSuitableNetwork = -1,//网络状况不符合（网络不通，或者只在wifi下请求的网络请求没在wifi下）
+    ZQRequestErrorCodeNoSuitableCache = -2//没有合适的缓存数据，只有在只请求缓存的时候使用
+};
+
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZQInterfaceConfigure <NSObject>
@@ -49,6 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 
+- (NSTimeInterval)timeoutInterval;
 - (NSString *)domainForLink;//用来检测网络可用性
 - (BOOL)isWiFiOnlyForRequestName:(NSString *)name;//是否只在wifi情况下进行请求
 - (NSSet *)acceptableContentTypesForRequestName:(NSString *)name;//需要复写acceptableContentTypes的可实现此方法否则用AF默认的
@@ -66,6 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 - (NSDictionary *)paramsDealForRequestName:(NSString *)name params:(nullable NSDictionary *)params;//需要对参数对额外处理得可实现此方法
+- (NSError *)dealErrorInfoWithError:(NSError *)error;
 - (NSData *)fileDataWithData:(NSData *)fileData;//压缩上传文件大小时使用
 - (void)networkActivityStartForRequestName:(NSString *)name;//开始请求网络（main thread）
 - (void)networkActivityEndForRequestName:(NSString *)name;//结束请求网络(main thread)

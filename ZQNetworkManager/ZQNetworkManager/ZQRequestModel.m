@@ -57,6 +57,24 @@
     return _dealPolicy;
 }
 
+- (NSDictionary *)params
+{
+    if (!_params)
+    {
+        return @{};
+    }
+    return _params;
+}
+
+- (NSString *)requestUrl
+{
+    if (!_requestUrl)
+    {
+        return @"";
+    }
+    return _requestUrl;
+}
+
 @end
 
 @implementation ZQFileUploadRequestModel

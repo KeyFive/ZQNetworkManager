@@ -319,7 +319,7 @@ static ZQNetworkServer *networkServcer = nil;
             }
             else
             {
-                [center dealWithErrorRequest:request responseObject:[NSError errorWithDomain:@"网络连接不可用" code:0 userInfo:nil] finishedBlock:block];
+                [center dealWithErrorRequest:request responseObject:[NSError errorWithDomain:@"" code:ZQRequestErrorCodeNoSuitableNetwork userInfo:@{@"url":request.requestUrl,@"params":request.params}] finishedBlock:block];
             }
             break;
         }
@@ -333,7 +333,7 @@ static ZQNetworkServer *networkServcer = nil;
                 }
                 else
                 {
-                    [center dealWithErrorRequest:request responseObject:[NSError errorWithDomain:@"网络连接不可用" code:0 userInfo:nil] finishedBlock:block];
+                    [center dealWithErrorRequest:request responseObject:[NSError errorWithDomain:@"" code:ZQRequestErrorCodeNoSuitableNetwork userInfo:@{@"url":request.requestUrl,@"params":request.params}] finishedBlock:block];
                 }
             }
             else
@@ -444,7 +444,6 @@ static ZQNetworkServer *networkServcer = nil;
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.activityConfigure networkActivityStartForRequestName:requestName];
         });
-
     }
 }
 
@@ -477,6 +476,14 @@ static ZQNetworkServer *networkServcer = nil;
         for (NSString *key in httpheadFileds.allKeys)
         {
             [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
+        }
+    }
+
+    if ([self.configure respondsToSelector:@selector(timeoutInterval)])
+    {
+        if ([self.configure timeoutInterval] != self.manager.requestSerializer.timeoutInterval)
+        {
+            self.manager.requestSerializer.timeoutInterval = [self.configure timeoutInterval];
         }
     }
 
@@ -519,11 +526,11 @@ static ZQNetworkServer *networkServcer = nil;
 
 - (void)checkOperationState:(ZQNetworkOperation *)operation block:(void(^)())block
 {
-    [operation finisheOperation];
     if (!operation.isCancelled)
     {
         block();
     }
+    [operation finisheOperation];
 }
 
 - (void)dealWithGETRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block operation:(ZQNetworkOperation *)operation
@@ -639,6 +646,12 @@ static ZQNetworkServer *networkServcer = nil;
 
 - (void)dealWithErrorRequest:(ZQRequestModel *)request responseObject:(NSError *)error finishedBlock:(ZQRequestFinishedBlock)block
 {
+
+    if ([self.activityConfigure respondsToSelector:@selector(dealErrorInfoWithError:)])
+    {
+        error = [self.activityConfigure dealErrorInfoWithError:error];
+    }
+
     if (request.requestPolicy == ZQRequestPolicyNetThenCache)
     {
         NSDictionary *cacheInfo = [self dealCacheRequest:request];
@@ -688,7 +701,7 @@ static ZQNetworkServer *networkServcer = nil;
         {
             if (request.requestPolicy == ZQRequestPolicyOnlyCache)
             {
-                NSError *cacheError = [NSError errorWithDomain:@"未找到缓存数据" code:0 userInfo:nil];
+                NSError *cacheError = [NSError errorWithDomain:@"" code:ZQRequestErrorCodeNoSuitableCache userInfo:@{@"url":request.requestUrl,@"params":request.params}];
                 [self dealWithErrorRequest:request responseObject:cacheError finishedBlock:block];
                 dealFinished = YES;
             }

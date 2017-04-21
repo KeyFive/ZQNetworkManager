@@ -82,8 +82,10 @@
 - (void)finisheOperation
 {
     [self.lock lock];
+    [self willChangeValueForKey:@"isExecuting"];
+    self.operationExecuting = NO;
+    [self didChangeValueForKey:@"isExecuting"];
     [self willChangeValueForKey:@"isFinished"];
-     self.operationExecuting = NO;
     self.operationFinished = YES;
     [self didChangeValueForKey:@"isFinished"];
     [self.lock unlock];
