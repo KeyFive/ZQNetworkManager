@@ -69,12 +69,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZQInterfaceActivitConfigure <NSObject>
 
-- (nullable NSDictionary *)responseInfoFromObject:(id)responseObject error:(NSError **)error;
+- (nullable NSDictionary *)responseInfoFromObject:(id)responseObject requestName:(NSString *)requestnAME error:(NSError **)error;
 
 @optional
 - (NSDictionary *)paramsDealForRequestName:(NSString *)name params:(nullable NSDictionary *)params;//需要对参数对额外处理得可实现此方法
-- (NSError *)dealErrorInfoWithError:(NSError *)error;
-- (NSData *)fileDataWithData:(NSData *)fileData;//压缩上传文件大小时使用
+- (NSError *)dealErrorInfoWithError:(NSError *)error requestName:(NSString *)requestName;
+- (NSData *)fileDataWithData:(NSData *)fileData requestName:(NSString *)requestName;//压缩上传文件大小时使用
 - (void)networkActivityStartForRequestName:(NSString *)name;//开始请求网络（main thread）
 - (void)networkActivityEndForRequestName:(NSString *)name;//结束请求网络(main thread)
 

@@ -11,7 +11,8 @@
 
 @interface ZQNetworkOperation : NSOperation
 
-@property (nonatomic, strong) void(^block)(void);//执行的block
+@property (nonatomic, copy) NSString *requestName;
+@property (nonatomic, copy) void(^block)(void);//执行的block
 - (void)finisheOperation;//结束操作
 
 @end

@@ -156,9 +156,13 @@ static ZQNetworkServer *networkServcer = nil;
                 NSMutableDictionary *operations = self.runningOperationes[key];
                 for (NSString *operationKey in operations.allKeys)
                 {
-                    NSOperation *operation = operations[operationKey];
+                    ZQNetworkOperation *operation = operations[operationKey];
                     [operation cancel];
-                    [self addWaitingOperation:operation name:key requestName:operationKey];
+                    ZQNetworkOperation *waitOperation = [[ZQNetworkOperation alloc] init];
+                    waitOperation.requestName = operation.requestName;
+                    waitOperation.block = operation.block;
+                    waitOperation.completionBlock = operation.completionBlock;
+                    [self addWaitingOperation:waitOperation name:key requestName:operationKey];
                 }
                 break;
             }
@@ -201,11 +205,15 @@ static ZQNetworkServer *networkServcer = nil;
                 NSMutableDictionary *operations = self.runningOperationes[key];
                 for (NSString *operationKey in operations.allKeys)
                 {
-                    NSOperation *operation = operations[operationKey];
+                    ZQNetworkOperation *operation = operations[operationKey];
                     if ([center isWiFiOnlyForRequestName:operationKey])
                     {
                         [operation cancel];
-                        [self addWaitingOperation:operation name:key requestName:operationKey];
+                        ZQNetworkOperation *waitOperation = [[ZQNetworkOperation alloc] init];
+                        waitOperation.requestName = operation.requestName;
+                        waitOperation.block = operation.block;
+                        waitOperation.completionBlock = operation.completionBlock;
+                        [self addWaitingOperation:waitOperation name:key requestName:operationKey];
                         [waitingOperationsKey addObject:operationKey];
                     }
                 }
@@ -594,11 +602,11 @@ static ZQNetworkServer *networkServcer = nil;
         request.params = [self.activityConfigure paramsDealForRequestName:request.name params:request.params];
     }
 
-    if ([self.activityConfigure respondsToSelector:@selector(fileDataWithData:)])
+    if ([self.activityConfigure respondsToSelector:@selector(fileDataWithData:requestName:)])
     {
         for (ZQRequstFileItem *fileItem in request.files)
         {
-            fileItem.fileData = [self.activityConfigure fileDataWithData:fileItem.fileData];
+            fileItem.fileData = [self.activityConfigure fileDataWithData:fileItem.fileData requestName:request.name];
         }
     }
     [self beginNetworkActivity:request.name];
@@ -630,7 +638,7 @@ static ZQNetworkServer *networkServcer = nil;
 - (void)dealWithSuccessRequest:(ZQRequestModel *)request responseObject:(id)responseObject finishedBlock:(ZQRequestFinishedBlock)block
 {
     NSError *responseError = nil;
-    NSDictionary *responseInfo = [self.activityConfigure responseInfoFromObject:responseObject error:&responseError];
+    NSDictionary *responseInfo = [self.activityConfigure responseInfoFromObject:responseObject requestName:request.name error:&responseError];
     if (responseError)
     {
             //返回错误
@@ -647,9 +655,9 @@ static ZQNetworkServer *networkServcer = nil;
 - (void)dealWithErrorRequest:(ZQRequestModel *)request responseObject:(NSError *)error finishedBlock:(ZQRequestFinishedBlock)block
 {
 
-    if ([self.activityConfigure respondsToSelector:@selector(dealErrorInfoWithError:)])
+    if ([self.activityConfigure respondsToSelector:@selector(dealErrorInfoWithError: requestName:)])
     {
-        error = [self.activityConfigure dealErrorInfoWithError:error];
+        error = [self.activityConfigure dealErrorInfoWithError:error requestName:request.name];
     }
 
     if (request.requestPolicy == ZQRequestPolicyNetThenCache)
@@ -718,6 +726,7 @@ static ZQNetworkServer *networkServcer = nil;
     {
         @weakify(self);
         ZQNetworkOperation *operation = [[ZQNetworkOperation alloc] init];
+        operation.requestName = request.name;
         @weakify(operation);
         operation.block = ^{
             @strongify(self);
@@ -736,6 +745,7 @@ static ZQNetworkServer *networkServcer = nil;
 {
     @weakify(self);
     ZQNetworkOperation *operation = [[ZQNetworkOperation alloc] init];
+    operation.requestName = request.name;
     @weakify(operation);
     operation.block = ^{
         @strongify(self);
