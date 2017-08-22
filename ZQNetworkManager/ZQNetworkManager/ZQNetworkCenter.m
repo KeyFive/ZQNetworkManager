@@ -123,8 +123,9 @@ static ZQNetworkServer *networkServcer = nil;
         NSMutableDictionary *operations = self.runningOperationes[key];
         for (NSString *operationKey in operations.allKeys)
         {
-            NSOperation *operation = operations[operationKey];
+            ZQNetworkOperation *operation = operations[operationKey];
             [operation cancel];
+            operation.responseBlock(nil, [NSError errorWithDomain:@"" code:ZQRequestErrorCodeCanceld userInfo:@{@"url":operation.request.requestUrl,@"params":operation.request.params}]);
         }
         [self.runningOperationes removeObjectForKey:key];
     }
@@ -158,11 +159,19 @@ static ZQNetworkServer *networkServcer = nil;
                 {
                     ZQNetworkOperation *operation = operations[operationKey];
                     [operation cancel];
-                    ZQNetworkOperation *waitOperation = [[ZQNetworkOperation alloc] init];
-                    waitOperation.requestName = operation.requestName;
-                    waitOperation.block = operation.block;
-                    waitOperation.completionBlock = operation.completionBlock;
-                    [self addWaitingOperation:waitOperation name:key requestName:operationKey];
+                    if (operation.request.dealPolicy == ZQDealPolicyAllowDelay)
+                    {
+                        ZQNetworkOperation *waitOperation = [[ZQNetworkOperation alloc] init];
+                        waitOperation.requestName = operation.requestName;
+                        waitOperation.block = operation.block;
+                        waitOperation.responseBlock = operation.responseBlock;
+                        waitOperation.completionBlock = operation.completionBlock;
+                        [self addWaitingOperation:waitOperation name:key requestName:operationKey];
+                    }
+                    else
+                    {
+                        operation.responseBlock(nil, [NSError errorWithDomain:@"" code:ZQRequestErrorCodeNoSuitableNetwork userInfo:@{@"url":operation.request.requestUrl,@"params":operation.request.params}]);
+                    }
                 }
                 break;
             }
@@ -209,12 +218,20 @@ static ZQNetworkServer *networkServcer = nil;
                     if ([center isWiFiOnlyForRequestName:operationKey])
                     {
                         [operation cancel];
-                        ZQNetworkOperation *waitOperation = [[ZQNetworkOperation alloc] init];
-                        waitOperation.requestName = operation.requestName;
-                        waitOperation.block = operation.block;
-                        waitOperation.completionBlock = operation.completionBlock;
-                        [self addWaitingOperation:waitOperation name:key requestName:operationKey];
-                        [waitingOperationsKey addObject:operationKey];
+                        if (operation.request.dealPolicy == ZQDealPolicyAllowDelay)
+                        {
+                            ZQNetworkOperation *waitOperation = [[ZQNetworkOperation alloc] init];
+                            waitOperation.requestName = operation.requestName;
+                            waitOperation.block = operation.block;
+                            waitOperation.responseBlock = operation.responseBlock;
+                            waitOperation.completionBlock = operation.completionBlock;
+                            [self addWaitingOperation:waitOperation name:key requestName:operationKey];
+                            [waitingOperationsKey addObject:operationKey];
+                        }
+                        else
+                        {
+                            operation.responseBlock(nil, [NSError errorWithDomain:@"" code:ZQRequestErrorCodeCanceld userInfo:@{@"url":operation.request.requestUrl,@"params":operation.request.params}]);
+                        }
                     }
                 }
                 [operations removeObjectsForKeys:waitingOperationsKey];
@@ -423,6 +440,28 @@ static ZQNetworkServer *networkServcer = nil;
     {
         self.centerName = centerName;
         self.configure = configure;
+
+        if ([self.configure respondsToSelector:@selector(httpHeadFiledsForRequest)])
+        {
+            NSDictionary *httpheadFileds = [self.configure httpHeadFiledsForRequest];
+            for (NSString *key in httpheadFileds.allKeys)
+            {
+                [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
+            }
+        }
+
+        if ([self.configure respondsToSelector:@selector(timeoutInterval)])
+        {
+            self.manager.requestSerializer.timeoutInterval = [self.configure timeoutInterval];
+        }
+
+        if ([self.configure respondsToSelector:@selector(acceptableContentTypesForRequest)])
+        {
+            NSSet *acceptableContnetTypes = [self.configure acceptableContentTypesForRequest];
+            self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+            [self.manager.responseSerializer setAcceptableContentTypes:acceptableContnetTypes];
+        }
+
         if ([self.configure respondsToSelector:@selector(domainForLink)])
         {
             self.networkReachabilityManager = [AFNetworkReachabilityManager managerForDomain:[self.configure domainForLink]];
@@ -476,37 +515,6 @@ static ZQNetworkServer *networkServcer = nil;
     [self.cacheCenter cacheResponseInfo:cacheInfo forRequest:request];
 }
 
-- (void)confirmHttpSessionWithRequestName:(NSString *)name
-{
-    if ([self.configure respondsToSelector:@selector(httpHeadFiledsForRequestName:)])
-    {
-        NSDictionary *httpheadFileds = [self.configure httpHeadFiledsForRequestName:name];
-        for (NSString *key in httpheadFileds.allKeys)
-        {
-            [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
-        }
-    }
-
-    if ([self.configure respondsToSelector:@selector(timeoutInterval)])
-    {
-        if ([self.configure timeoutInterval] != self.manager.requestSerializer.timeoutInterval)
-        {
-            self.manager.requestSerializer.timeoutInterval = [self.configure timeoutInterval];
-        }
-    }
-
-    if ([self.configure respondsToSelector:@selector(acceptableContentTypesForRequestName:)])
-    {
-        NSSet *acceptableContnetTypes = [self.configure acceptableContentTypesForRequestName:name];
-        self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-        [self.manager.responseSerializer setAcceptableContentTypes:acceptableContnetTypes];
-    }
-    else
-    {
-        self.manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    }
-}
-
 - (void)beginRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block operation:(ZQNetworkOperation *)operation
 {
     if (operation.isCancelled)
@@ -514,7 +522,6 @@ static ZQNetworkServer *networkServcer = nil;
         [operation finisheOperation];
         return;
     }
-    [self confirmHttpSessionWithRequestName:request.name];
     switch (request.method)
     {
         case ZQRequestMenthodGET:
@@ -532,7 +539,7 @@ static ZQNetworkServer *networkServcer = nil;
     }
 }
 
-- (void)checkOperationState:(ZQNetworkOperation *)operation block:(void(^)())block
+- (void)checkOperationState:(ZQNetworkOperation *)operation block:(void(^)())block request:(ZQRequestModel *)request;
 {
     if (!operation.isCancelled)
     {
@@ -553,7 +560,7 @@ static ZQNetworkServer *networkServcer = nil;
         [self checkOperationState:operation block:^{
             @strongify(self);
             [self dealWithSuccessRequest:request responseObject:responseObject finishedBlock:block];
-        }];
+        } request:request];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         @strongify(self);
         [self endNetworkActivity:request.name];
@@ -561,7 +568,7 @@ static ZQNetworkServer *networkServcer = nil;
         [self checkOperationState:operation block:^{
             @strongify(self);
             [self dealWithErrorRequest:request responseObject:error finishedBlock:block];
-        }];
+        } request:request];
     }];
 }
 
@@ -576,7 +583,7 @@ static ZQNetworkServer *networkServcer = nil;
         [self checkOperationState:operation block:^{
             @strongify(self);
             [self dealWithSuccessRequest:request responseObject:responseObject finishedBlock:block];
-        }];
+        } request:request];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         @strongify(self);
         [self endNetworkActivity:request.name];
@@ -584,7 +591,7 @@ static ZQNetworkServer *networkServcer = nil;
         [self checkOperationState:operation block:^{
             @strongify(self);
             [self dealWithErrorRequest:request responseObject:error finishedBlock:block];
-        }];
+        } request:request];
     }];
 }
 
@@ -596,7 +603,6 @@ static ZQNetworkServer *networkServcer = nil;
         return;
     }
 
-    [self confirmHttpSessionWithRequestName:request.name];
     if ([self.activityConfigure respondsToSelector:@selector(paramsDealForRequestName:params:)])
     {
         request.params = [self.activityConfigure paramsDealForRequestName:request.name params:request.params];
@@ -623,7 +629,7 @@ static ZQNetworkServer *networkServcer = nil;
         [self checkOperationState:operation block:^{
             @strongify(self);
             [self dealWithSuccessRequest:request responseObject:responseObject finishedBlock:block];
-        }];
+        } request:request];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         @strongify(self);
         [self endNetworkActivity:request.name];
@@ -631,7 +637,7 @@ static ZQNetworkServer *networkServcer = nil;
         [self checkOperationState:operation block:^{
             @strongify(self);
             [self dealWithErrorRequest:request responseObject:error finishedBlock:block];
-        }];
+        } request:request];
     }];
 }
 
@@ -733,6 +739,8 @@ static ZQNetworkServer *networkServcer = nil;
             @strongify(operation);
             [self beginRequest:request finishedBlock:block operation:operation];
         };
+        operation.request = request;
+        operation.responseBlock = block;
         operation.completionBlock = ^{
             @strongify(self);
             [self.server completionOperationWithName:self.centerName requestName:request.name];
@@ -752,6 +760,8 @@ static ZQNetworkServer *networkServcer = nil;
         @strongify(operation);
         [self beginFileUploadRequest:request finishedBlock:block operation:operation];
     };
+    operation.request = request;
+    operation.responseBlock = block;
     operation.completionBlock = ^{
         @strongify(self);
         [self.server completionOperationWithName:self.centerName requestName:request.name];

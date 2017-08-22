@@ -43,7 +43,8 @@ typedef NS_ENUM(NSUInteger, ZQDealPolicy)//即时处理，或者允许延时处�
 typedef NS_ENUM(NSInteger,ZQRequestErrorCode)
 {
     ZQRequestErrorCodeNoSuitableNetwork = -1,//网络状况不符合（网络不通，或者只在wifi下请求的网络请求没在wifi下）
-    ZQRequestErrorCodeNoSuitableCache = -2//没有合适的缓存数据，只有在只请求缓存的时候使用
+    ZQRequestErrorCodeNoSuitableCache = -2,//没有合适的缓存数据，只有在只请求缓存的时候使用
+    ZQRequestErrorCodeCanceld = -3,//由于请求对象被销毁，操作自动失效
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -58,8 +59,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSTimeInterval)timeoutInterval;
 - (NSString *)domainForLink;//用来检测网络可用性
 - (BOOL)isWiFiOnlyForRequestName:(NSString *)name;//是否只在wifi情况下进行请求
-- (NSSet *)acceptableContentTypesForRequestName:(NSString *)name;//需要复写acceptableContentTypes的可实现此方法否则用AF默认的
-- (NSDictionary *)httpHeadFiledsForRequestName:(NSString *)name;//需要设置得请求头
+- (NSSet *)acceptableContentTypesForRequest;//需要复写acceptableContentTypes的可实现此方法否则用AF默认的
+- (NSDictionary *)httpHeadFiledsForRequest;//需要设置得请求头
 - (ZQRequestPolicy)requestPolicyForRequestName:(NSString *)name userInfo:(nullable NSDictionary *)userInfo;//请求策略
 - (ZQCachePolicy)cachePolicyForRequestName:(NSString *)name userInfo:(nullable NSDictionary *)userInfo;//缓存策略
 - (NSTimeInterval)cacheValidityTimeIntervalForRequestName:(NSString *)name userInfo:(nullable NSDictionary *)userInfo;//缓存的有效期
@@ -69,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZQInterfaceActivitConfigure <NSObject>
 
-- (nullable NSDictionary *)responseInfoFromObject:(id)responseObject requestName:(NSString *)requestnAME error:(NSError **)error;
+- (nullable NSDictionary *)responseInfoFromObject:(id)responseObject requestName:(NSString *)requestName error:(NSError **)error;
 
 @optional
 - (NSDictionary *)paramsDealForRequestName:(NSString *)name params:(nullable NSDictionary *)params;//需要对参数对额外处理得可实现此方法
