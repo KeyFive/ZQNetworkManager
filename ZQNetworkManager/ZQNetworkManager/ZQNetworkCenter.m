@@ -441,25 +441,16 @@ static ZQNetworkServer *networkServcer = nil;
         self.centerName = centerName;
         self.configure = configure;
 
-        if ([self.configure respondsToSelector:@selector(httpHeadFiledsForRequest)])
-        {
-            NSDictionary *httpheadFileds = [self.configure httpHeadFiledsForRequest];
-            for (NSString *key in httpheadFileds.allKeys)
-            {
-                [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
-            }
-        }
-
-        if ([self.configure respondsToSelector:@selector(timeoutInterval)])
-        {
-            self.manager.requestSerializer.timeoutInterval = [self.configure timeoutInterval];
-        }
-
         if ([self.configure respondsToSelector:@selector(acceptableContentTypesForRequest)])
         {
             NSSet *acceptableContnetTypes = [self.configure acceptableContentTypesForRequest];
             self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
             [self.manager.responseSerializer setAcceptableContentTypes:acceptableContnetTypes];
+        }
+
+        if ([self.configure respondsToSelector:@selector(timeoutInterval)])
+        {
+            self.manager.requestSerializer.timeoutInterval = [self.configure timeoutInterval];
         }
 
         if ([self.configure respondsToSelector:@selector(domainForLink)])
@@ -494,6 +485,18 @@ static ZQNetworkServer *networkServcer = nil;
     }
 }
 
+- (void)confirmHttpSessionWithRequestName:(NSString *)requestName
+{
+    if ([self.configure respondsToSelector:@selector(httpHeadFiledsForRequestName:)])
+    {
+        NSDictionary *httpheadFileds = [self.configure httpHeadFiledsForRequestName:requestName];
+        for (NSString *key in httpheadFileds.allKeys)
+        {
+            [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
+        }
+    }
+};
+
 - (void)endNetworkActivity:(NSString *)requestName
 {
     if ([self.activityConfigure respondsToSelector:@selector(networkActivityEndForRequestName:)])
@@ -522,6 +525,7 @@ static ZQNetworkServer *networkServcer = nil;
         [operation finisheOperation];
         return;
     }
+    [self confirmHttpSessionWithRequestName:request.name];
     switch (request.method)
     {
         case ZQRequestMenthodGET:
@@ -602,6 +606,8 @@ static ZQNetworkServer *networkServcer = nil;
         [operation finisheOperation];
         return;
     }
+
+    [self confirmHttpSessionWithRequestName:request.name];
 
     if ([self.activityConfigure respondsToSelector:@selector(paramsDealForRequestName:params:)])
     {
