@@ -500,6 +500,10 @@ static ZQNetworkServer *networkServcer = nil;
                 {
                     [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
                 }
+                else
+                {
+                    [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
+                }
             }
         }
     }
