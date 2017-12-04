@@ -498,7 +498,10 @@ static ZQNetworkServer *networkServcer = nil;
                 NSString *oldValue = self.manager.requestSerializer.HTTPRequestHeaders[key];
                 if (oldValue && ![value isEqualToString:oldValue])
                 {
-                    [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
+                    if ([value isEqualToString:oldValue])
+                    {
+                        [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
+                    }
                 }
                 else
                 {
