@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ZQNetworkManager'
-  s.version          = '1.9.2'
+  s.version          = '1.9.3'
   s.summary          = 'A network mangaer'
 
 # This description is used to generate tags and improve search results.

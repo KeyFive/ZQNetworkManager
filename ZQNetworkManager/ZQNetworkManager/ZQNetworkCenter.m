@@ -496,7 +496,7 @@ static ZQNetworkServer *networkServcer = nil;
             if ([value isKindOfClass:[NSString class]] && [key isKindOfClass:[NSString class]])
             {
                 NSString *oldValue = self.manager.requestSerializer.HTTPRequestHeaders[key];
-                if (oldValue && ![value isEqualToString:oldValue])
+                if (oldValue)
                 {
                     if ([value isEqualToString:oldValue])
                     {
