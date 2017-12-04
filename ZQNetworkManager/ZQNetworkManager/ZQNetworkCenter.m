@@ -490,9 +490,17 @@ static ZQNetworkServer *networkServcer = nil;
     if ([self.configure respondsToSelector:@selector(httpHeadFiledsForRequestName:)])
     {
         NSDictionary *httpheadFileds = [self.configure httpHeadFiledsForRequestName:requestName];
-        for (NSString *key in httpheadFileds.allKeys)
+        for (id key in httpheadFileds.allKeys)
         {
-            [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
+            id value = httpheadFileds[key];
+            if ([value isKindOfClass:[NSString class]] && [key isKindOfClass:[NSString class]])
+            {
+                NSString *oldValue = self.manager.requestSerializer.HTTPRequestHeaders[key];
+                if (oldValue && ![value isEqualToString:oldValue])
+                {
+                    [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
+                }
+            }
         }
     }
 };
