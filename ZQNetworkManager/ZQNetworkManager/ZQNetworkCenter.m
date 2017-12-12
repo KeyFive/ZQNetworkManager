@@ -25,7 +25,6 @@ static dispatch_semaphore_t serverSignal;
 
 @property (nonatomic, copy, readwrite) NSString *centerName;
 @property (nonatomic, strong) id<ZQInterfaceConfigure> configure;
-@property (nonatomic, strong) AFHTTPSessionManager *manager;
 @property (nonatomic, weak) ZQNetworkServer *server;
 @property (nonatomic, strong) ZQNetworkCacheCenter *cacheCenter;
 @property (nonatomic, strong) AFNetworkReachabilityManager *networkReachabilityManager;
@@ -441,18 +440,6 @@ static ZQNetworkServer *networkServcer = nil;
         self.centerName = centerName;
         self.configure = configure;
 
-        if ([self.configure respondsToSelector:@selector(acceptableContentTypesForRequest)])
-        {
-            NSSet *acceptableContnetTypes = [self.configure acceptableContentTypesForRequest];
-            self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-            [self.manager.responseSerializer setAcceptableContentTypes:acceptableContnetTypes];
-        }
-
-        if ([self.configure respondsToSelector:@selector(timeoutInterval)])
-        {
-            self.manager.requestSerializer.timeoutInterval = [self.configure timeoutInterval];
-        }
-
         if ([self.configure respondsToSelector:@selector(domainForLink)])
         {
             self.networkReachabilityManager = [AFNetworkReachabilityManager managerForDomain:[self.configure domainForLink]];
@@ -485,8 +472,22 @@ static ZQNetworkServer *networkServcer = nil;
     }
 }
 
-- (void)confirmHttpSessionWithRequestName:(NSString *)requestName
+- (AFHTTPSessionManager *)confirmHttpSessionWithRequestName:(NSString *)requestName
 {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+
+    if ([self.configure respondsToSelector:@selector(acceptableContentTypesForRequest)])
+    {
+        NSSet *acceptableContnetTypes = [self.configure acceptableContentTypesForRequest];
+        manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        [manager.responseSerializer setAcceptableContentTypes:acceptableContnetTypes];
+    }
+
+    if ([self.configure respondsToSelector:@selector(timeoutInterval)])
+    {
+        manager.requestSerializer.timeoutInterval = [self.configure timeoutInterval];
+    }
+
     if ([self.configure respondsToSelector:@selector(httpHeadFiledsForRequestName:)])
     {
         NSDictionary *httpheadFileds = [self.configure httpHeadFiledsForRequestName:requestName];
@@ -495,21 +496,11 @@ static ZQNetworkServer *networkServcer = nil;
             id value = httpheadFileds[key];
             if ([value isKindOfClass:[NSString class]] && [key isKindOfClass:[NSString class]])
             {
-                NSString *oldValue = self.manager.requestSerializer.HTTPRequestHeaders[key];
-                if (oldValue)
-                {
-                    if (![value isEqualToString:oldValue])
-                    {
-                        [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
-                    }
-                }
-                else
-                {
-                    [self.manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
-                }
+                [manager.requestSerializer setValue:httpheadFileds[key] forHTTPHeaderField:key];
             }
         }
     }
+    return manager;
 };
 
 - (void)endNetworkActivity:(NSString *)requestName
@@ -540,17 +531,17 @@ static ZQNetworkServer *networkServcer = nil;
         [operation finisheOperation];
         return;
     }
-    [self confirmHttpSessionWithRequestName:request.name];
+    AFHTTPSessionManager *manager = [self confirmHttpSessionWithRequestName:request.name];
     switch (request.method)
     {
         case ZQRequestMenthodGET:
         {
-            [self dealWithGETRequest:request finishedBlock:block operation:operation];
+            [self requsetManager:manager dealWithGETRequest:request finishedBlock:block operation:operation];
             break;
         }
         case ZQRequestMenthodPOST:
         {
-            [self dealWithPOSTRequest:request finishedBlock:block operation:operation];
+            [self requsetManager:manager dealWithPOSTRequest:request finishedBlock:block operation:operation];
             break;
         }
         default:
@@ -567,12 +558,12 @@ static ZQNetworkServer *networkServcer = nil;
     [operation finisheOperation];
 }
 
-- (void)dealWithGETRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block operation:(ZQNetworkOperation *)operation
+- (void)requsetManager:(AFHTTPSessionManager *)manager dealWithGETRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block operation:(ZQNetworkOperation *)operation
 {
 
     @weakify(self);
     [self beginNetworkActivity:request.name];
-    [self.manager GET:request.requestUrl parameters:request.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    [manager GET:request.requestUrl parameters:request.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         @strongify(self);
         [self endNetworkActivity:request.name];
         @weakify(self);
@@ -591,11 +582,11 @@ static ZQNetworkServer *networkServcer = nil;
     }];
 }
 
-- (void)dealWithPOSTRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block operation:(ZQNetworkOperation *)operation
+- (void)requsetManager:(AFHTTPSessionManager *)manager dealWithPOSTRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block operation:(ZQNetworkOperation *)operation
 {
     [self beginNetworkActivity:request.name];
     @weakify(self);
-    [self.manager POST:request.requestUrl parameters:request.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    [manager POST:request.requestUrl parameters:request.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         @strongify(self);
         [self endNetworkActivity:request.name];
         @weakify(self);
@@ -622,7 +613,7 @@ static ZQNetworkServer *networkServcer = nil;
         return;
     }
 
-    [self confirmHttpSessionWithRequestName:request.name];
+    AFHTTPSessionManager *manager = [self confirmHttpSessionWithRequestName:request.name];
 
     if ([self.activityConfigure respondsToSelector:@selector(paramsDealForRequestName:params:)])
     {
@@ -638,7 +629,7 @@ static ZQNetworkServer *networkServcer = nil;
     }
     [self beginNetworkActivity:request.name];
     @weakify(self);
-    [self.manager POST:request.requestUrl parameters:request.params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+    [manager POST:request.requestUrl parameters:request.params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         for (ZQRequstFileItem *fileItem in request.files)
         {
             [formData appendPartWithFileData:fileItem.fileData name:fileItem.name fileName:fileItem.fileName mimeType:fileItem.mimeType];
@@ -809,16 +800,6 @@ static ZQNetworkServer *networkServcer = nil;
         _cacheCenter = [ZQNetworkCacheCenter cacheCenterWithName:self.centerName];
     }
     return _cacheCenter;
-}
-
-- (AFHTTPSessionManager *)manager
-{
-    if (!_manager)
-    {
-        _manager = [AFHTTPSessionManager manager];
-        _manager.requestSerializer.timeoutInterval = 10;
-    }
-    return _manager;
 }
 
 - (ZQNetworkServer *)server
