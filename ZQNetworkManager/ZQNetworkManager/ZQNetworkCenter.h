@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZQNetworkCenter : NSObject
 
 @property (nonatomic, copy, readonly) NSString *centerName;
-
+@property (nonatomic, strong) id<ZQInterfaceConfigure> configure;
 @property (nonatomic, strong, nullable) id<ZQInterfaceActivitConfigure> activityConfigure;
 
 + (instancetype)centerWithinterfaceConfigure:(id<ZQInterfaceConfigure>)configure centerName:(NSString *)centerName;

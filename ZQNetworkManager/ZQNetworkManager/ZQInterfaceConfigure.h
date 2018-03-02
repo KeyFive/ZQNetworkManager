@@ -56,6 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 
+- (BOOL)allowConcurrencyRequestName:(NSString *)name;//默认发起同一个请求会覆盖上一次请求，上一个请求不会发生回调
 - (NSTimeInterval)timeoutInterval;
 - (NSString *)domainForLink;//用来检测网络可用性
 - (BOOL)isWiFiOnlyForRequestName:(NSString *)name;//是否只在wifi情况下进行请求

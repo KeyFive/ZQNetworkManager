@@ -24,7 +24,6 @@ static dispatch_semaphore_t serverSignal;
 @interface ZQNetworkCenter()
 
 @property (nonatomic, copy, readwrite) NSString *centerName;
-@property (nonatomic, strong) id<ZQInterfaceConfigure> configure;
 @property (nonatomic, weak) ZQNetworkServer *server;
 @property (nonatomic, strong) ZQNetworkCacheCenter *cacheCenter;
 @property (nonatomic, strong) AFNetworkReachabilityManager *networkReachabilityManager;
@@ -124,7 +123,6 @@ static ZQNetworkServer *networkServcer = nil;
         {
             ZQNetworkOperation *operation = operations[operationKey];
             [operation cancel];
-            operation.responseBlock(nil, [NSError errorWithDomain:@"" code:ZQRequestErrorCodeCanceld userInfo:@{@"url":operation.request.requestUrl,@"params":operation.request.params}]);
         }
         [self.runningOperationes removeObjectForKey:key];
     }
@@ -169,7 +167,7 @@ static ZQNetworkServer *networkServcer = nil;
                     }
                     else
                     {
-                        operation.responseBlock(nil, [NSError errorWithDomain:@"" code:ZQRequestErrorCodeNoSuitableNetwork userInfo:@{@"url":operation.request.requestUrl,@"params":operation.request.params}]);
+//                        operation.responseBlock(nil, [NSError errorWithDomain:@"" code:ZQRequestErrorCodeNoSuitableNetwork userInfo:@{@"url":operation.request.requestUrl,@"params":operation.request.params}]);
                     }
                 }
                 break;
@@ -229,7 +227,7 @@ static ZQNetworkServer *networkServcer = nil;
                         }
                         else
                         {
-                            operation.responseBlock(nil, [NSError errorWithDomain:@"" code:ZQRequestErrorCodeCanceld userInfo:@{@"url":operation.request.requestUrl,@"params":operation.request.params}]);
+//                            operation.responseBlock(nil, [NSError errorWithDomain:@"" code:ZQRequestErrorCodeCanceld userInfo:@{@"url":operation.request.requestUrl,@"params":operation.request.params}]);
                         }
                     }
                 }
@@ -285,19 +283,29 @@ static ZQNetworkServer *networkServcer = nil;
     {
         operations = [NSMutableDictionary dictionary];
     }
-    NSOperation *preoperation = [operations objectForKey:requestName];
-    if (preoperation)
+    id<ZQInterfaceConfigure> configure = [(ZQNetworkCenter *)[self.networkCenters objectForKey:name] configure];
+    if ([configure respondsToSelector:@selector(allowConcurrencyRequestName:)] && [configure allowConcurrencyRequestName:requestName])
     {
-        [preoperation cancel];
         [operations setObject:operation forKey:requestName];
         [self.runningOperationes setObject:operations forKey:name];
         [self.operationQueue addOperation:operation];
     }
     else
     {
-        [operations setObject:operation forKey:requestName];
-        [self.runningOperationes setObject:operations forKey:name];
-        [self.operationQueue addOperation:operation];
+        NSOperation *preoperation = [operations objectForKey:requestName];
+        if (preoperation)
+        {
+            [preoperation cancel];
+            [operations setObject:operation forKey:requestName];
+            [self.runningOperationes setObject:operations forKey:name];
+            [self.operationQueue addOperation:operation];
+        }
+        else
+        {
+            [operations setObject:operation forKey:requestName];
+            [self.runningOperationes setObject:operations forKey:name];
+            [self.operationQueue addOperation:operation];
+        }
     }
 }
 
@@ -560,7 +568,6 @@ static ZQNetworkServer *networkServcer = nil;
 
 - (void)requsetManager:(AFHTTPSessionManager *)manager dealWithGETRequest:(ZQRequestModel *)request finishedBlock:(ZQRequestFinishedBlock)block operation:(ZQNetworkOperation *)operation
 {
-
     @weakify(self);
     [self beginNetworkActivity:request.name];
     [manager GET:request.requestUrl parameters:request.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -666,7 +673,7 @@ static ZQNetworkServer *networkServcer = nil;
     {
             //正确
         [self analysisUsefulInfo:responseInfo request:request finishedBlock:block];
-         [self cacheRequest:request cacheInfo:responseInfo];
+        [self cacheRequest:request cacheInfo:responseInfo];
     }
 }
 
