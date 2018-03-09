@@ -42,9 +42,9 @@ typedef NS_ENUM(NSUInteger, ZQDealPolicy)//即时处理，或者允许延时处�
 
 typedef NS_ENUM(NSInteger,ZQRequestErrorCode)
 {
-    ZQRequestErrorCodeNoSuitableNetwork = -1,//网络状况不符合（网络不通，或者只在wifi下请求的网络请求没在wifi下）
-    ZQRequestErrorCodeNoSuitableCache = -2,//没有合适的缓存数据，只有在只请求缓存的时候使用
-    ZQRequestErrorCodeCanceld = -3,//由于请求对象被销毁，操作自动失效
+    ZQRequestErrorCodeNoSuitableNetwork = 1111,//网络状况不符合（网络不通，或者只在wifi下请求的网络请求没在wifi下）
+    ZQRequestErrorCodeNoSuitableCache = 1112,//没有合适的缓存数据，只有在只请求缓存的时候使用
+    ZQRequestErrorCodeCanceld = 1113,//由于请求对象被销毁，操作自动失效
 };
 
 NS_ASSUME_NONNULL_BEGIN

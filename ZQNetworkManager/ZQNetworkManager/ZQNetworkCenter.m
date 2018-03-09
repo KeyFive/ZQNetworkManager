@@ -167,7 +167,7 @@ static ZQNetworkServer *networkServcer = nil;
                     }
                     else
                     {
-//                        operation.responseBlock(nil, [NSError errorWithDomain:@"" code:ZQRequestErrorCodeNoSuitableNetwork userInfo:@{@"url":operation.request.requestUrl,@"params":operation.request.params}]);
+                        operation.responseBlock(nil, [NSError errorWithDomain:@"" code:ZQRequestErrorCodeNoSuitableNetwork userInfo:@{@"url":operation.request.requestUrl,@"params":operation.request.params}]);
                     }
                 }
                 break;
@@ -227,7 +227,7 @@ static ZQNetworkServer *networkServcer = nil;
                         }
                         else
                         {
-//                            operation.responseBlock(nil, [NSError errorWithDomain:@"" code:ZQRequestErrorCodeCanceld userInfo:@{@"url":operation.request.requestUrl,@"params":operation.request.params}]);
+                            operation.responseBlock(nil, [NSError errorWithDomain:@"" code:ZQRequestErrorCodeCanceld userInfo:@{@"url":operation.request.requestUrl,@"params":operation.request.params}]);
                         }
                     }
                 }
@@ -292,10 +292,11 @@ static ZQNetworkServer *networkServcer = nil;
     }
     else
     {
-        NSOperation *preoperation = [operations objectForKey:requestName];
+        ZQNetworkOperation *preoperation = [operations objectForKey:requestName];
         if (preoperation)
         {
             [preoperation cancel];
+            preoperation.responseBlock(nil, [NSError errorWithDomain:@"" code:ZQRequestErrorCodeCanceld userInfo:@{@"url":preoperation.request.requestUrl,@"params":preoperation.request.params}]);
             [operations setObject:operation forKey:requestName];
             [self.runningOperationes setObject:operations forKey:name];
             [self.operationQueue addOperation:operation];
