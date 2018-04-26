@@ -485,6 +485,17 @@ static ZQNetworkServer *networkServcer = nil;
 {
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
 
+    if ([self.configure respondsToSelector:@selector(customerSecurityPolicy)])
+    {
+        AFSecurityPolicy *policy = [self.configure customerSecurityPolicy];
+        manager.securityPolicy = policy;
+    }
+
+    if ([self.configure respondsToSelector:@selector(sessionAuthChallengeDispositionBlock)])
+    {
+        [manager setSessionDidReceiveAuthenticationChallengeBlock:[self.configure sessionAuthChallengeDispositionBlock]];
+    }
+
     if ([self.configure respondsToSelector:@selector(acceptableContentTypesForRequest)])
     {
         NSSet *acceptableContnetTypes = [self.configure acceptableContentTypesForRequest];

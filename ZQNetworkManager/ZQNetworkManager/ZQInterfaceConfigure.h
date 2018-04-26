@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <AFNetworking/AFNetworking.h>
 
 typedef  void(^ZQRequestFinishedBlock)( NSDictionary * __nullable responseObject, NSError * __nullable error);
 
@@ -56,6 +57,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 
+- (AFSecurityPolicy *)customerSecurityPolicy;//是否自定义加密策略
+- (NSURLSessionAuthChallengeDisposition (^) (NSURLSession * _Nonnull session, NSURLAuthenticationChallenge * _Nonnull challenge, NSURLCredential *__autoreleasing  _Nullable * _Nullable credential))sessionAuthChallengeDispositionBlock;
 - (BOOL)allowConcurrencyRequestName:(NSString *)name;//默认发起同一个请求会覆盖上一次请求，上一个请求不会发生回调
 - (NSTimeInterval)timeoutInterval;
 - (NSString *)domainForLink;//用来检测网络可用性
